@@ -4,15 +4,37 @@
     <meta charset="UTF-8">
     <title>Shop</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="wrapper">
         <div class="container">
-            <aside class="sidebar">
+            <aside id="sidebar">
+                <div id="sidebar-box">
+                    <img id="sidebar-icon" src="images/sidebar.png" alt="=" width="32" height="32">
+                </div>
                 <div id="cart-header">
                     Cart
                 </div>
-
+                <div class="cart-goods">
+                    <div class="product">
+                        <div class="product-content">
+                            <div class="delete-product"></div>
+                            <div class="product-img"></div>
+                            <div class="product-title"></div>
+                            <div class="product-description"></div>
+                            <div class="amount-price"></div>
+                            <div class="price"></div>
+                        </div>
+                        <div class="cart-amount">
+                            <div class="decrease-product"></div>
+                            <div class="amount"></div>
+                            <div class="increase-product"></div>
+                        </div>
+                    </div>
+                </div>
             </aside>
             <div class="goods">
 
