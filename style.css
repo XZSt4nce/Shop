@@ -1,0 +1,26 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.wrapper {
+    background: purple;
+}
+
+.sidebar {
+    width: 20vw;
+    min-width: 200px;
+    height: 100vh;
+    background: magenta;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+#cart-header {
+    width: 80%;
+    height: 30px;
+    margin: 20px auto;
+    background: white;
+    text-align: center;
+}
