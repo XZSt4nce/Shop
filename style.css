@@ -10,7 +10,9 @@
 }
 
 #sidebar {
-    width: 350px;
+    width: 100%;
+    min-width: 250px;
+    max-width: 350px;
     height: 100vh;
     padding: 0 20px;
     background: #9932CC;
@@ -43,7 +45,7 @@
 #cart-header {
     width: 100%;
     height: 30px;
-    border-radius: 3px;
+    border-radius: 25px;
     font-size: 25px;
     text-align: center;
     flex-direction: column;
@@ -52,6 +54,7 @@
     align-items: center;
     background: white;
     margin: 20px auto;
+    font-weight: bold;
 }
 
 .cart-goods {
@@ -63,10 +66,16 @@
 
 .product {
     width: 100%;
-    height: 100%;
     background: white;
-    border-radius: 3px;
     padding: 10px;
+}
+
+.product {
+    border-radius: 25px;
+}
+
+.cart-amount {
+    height: 20px;
 }
 
 .product-content {
@@ -82,7 +91,7 @@
     background-size: contain;
     justify-self: end;
     border: black solid 1px;
-    border-radius: 3px;
+    border-radius: 25px;
     margin-left: auto;
     margin-right: 10px;
 }
@@ -97,17 +106,45 @@
 }
 
 .product-title {
-
+    font-weight: bold;
 }
 
 .product-description {
-
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .amount-price {
 
 }
 
-.amount {
+.total-price {
 
+}
+
+.decrease-product {
+    width: 10px;
+    height: 100%;
+    background-image: url("/images/minus.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+}
+
+.amount {
+    text-align: center;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.increase-product {
+    width: 10px;
+    height: 100%;
+    background-image: url("/images/plus.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
 }
