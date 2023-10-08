@@ -11,9 +11,12 @@ class Product {
     }
 }
 
+
+const productsContainer = document.getElementById('products-container');
 const sidebar = document.getElementById('sidebar');
 const sidebarBox = document.getElementById('sidebar-box');
 const cartGoods = document.getElementById('cart-goods');
+// const buyButton
 // const cart = []; // Хранит id товаров, которые добавлены в корзину
 
 let isSidebarOpen = false
@@ -25,14 +28,28 @@ loadProducts();
 
 sidebarBox.addEventListener("click", () => {
     if (isSidebarOpen) {
-        sidebar.style.left = `-${sidebar.offsetWidth}px`;
+        productsContainer.style.left = `-${sidebar.offsetWidth}px`;
+        productsContainer.style.width = `calc(100vw + ${sidebar.offsetWidth - 20}px)`;
         isSidebarOpen = false;
     }
     else {
-        sidebar.style.left = "0";
+        productsContainer.style.left = "0";
+        productsContainer.style.width = 'calc(100vw - 20px)';
         isSidebarOpen = true;
     }
 });
+
+window.addEventListener('resize', () => {
+    productsContainer.style.transition = 'none';
+    if (!isSidebarOpen) {
+        productsContainer.style.left = `-${sidebar.offsetWidth}px`;
+        productsContainer.style.width = `calc(100vw + ${sidebar.offsetWidth - 20}px)`;
+    }
+    setTimeout(() => {
+        productsContainer.style.transition = 'all 0.5s';
+    }, 500);
+
+})
 
 async function loadProducts() {
     if (productsNotOut) {
@@ -70,7 +87,11 @@ function updateCartPrice() {
     document.getElementById('order-price').innerText = `${orderPrice}₽`;
 }
 
-function delProduct(element, productsBuyContainer) {
+function delProduct(id, element, productsBuyContainer) {
+    const product = products[id];
+    orderPrice -= product.cartAmount * product.price;
+    updateCartPrice();
+    product.cartAmount = 0;
     cartGoods.removeChild(element);
 }
 
@@ -81,7 +102,7 @@ function decProduct(id, amountPrice, totalPrice, cartAmount, productsAmount) {
     // productsAmount.innerText = `${cartProduct.cartAmount}pc.`;
     if (cartProduct.cartAmount === 0) {
         // delProduct(cartAmount.parentNode.parentNode, productsAmount.parentNode);
-        delProduct(cartAmount.parentNode.parentNode);
+        delProduct(id, cartAmount.parentNode.parentNode);
     }
     amountPrice.innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}₽`;
     totalPrice.innerText = `= ${cartProduct.cartAmount * cartProduct.price}₽`;
@@ -112,10 +133,10 @@ function addToCart(id, productsBuyContainer) {
         const productPrice = document.createElement('div');
         const amountPrice = document.createElement('div');
         const totalPrice = document.createElement('div');
-        const cartAmount = document.createElement('div');
+        const amountContainer = document.createElement('div');
         const decreaseProduct = document.createElement('div');
         const amount = document.createElement('div');
-        const increaseProduct = document.createElement('div');
+        const increaseProduct = document.createElement('button');
         const productObj = products[id];
 
         product.classList.add('product');
@@ -134,14 +155,14 @@ function addToCart(id, productsBuyContainer) {
         updateCartPrice();
         totalPrice.classList.add('total-price');
         totalPrice.innerText = `= ${productObj.price}₽`;
-        cartAmount.classList.add('cart-amount');
+        amountContainer.classList.add('amount-container');
         decreaseProduct.classList.add('decrease-product');
         amount.classList.add('amount');
         amount.innerText = '1pc.';
         increaseProduct.classList.add('increase-product');
 
         deleteProduct.addEventListener('click', () => {
-            delProduct(id, productsBuyContainer);
+            delProduct(id, product, productsBuyContainer);
         });
         decreaseProduct.addEventListener('click', () => {
             decProduct(id, amountPrice, totalPrice, amount);
@@ -153,16 +174,16 @@ function addToCart(id, productsBuyContainer) {
         productPrice.appendChild(amountPrice);
         productPrice.appendChild(totalPrice);
 
-        cartAmount.appendChild(decreaseProduct);
-        cartAmount.appendChild(amount);
-        cartAmount.appendChild(increaseProduct);
+        amountContainer.appendChild(decreaseProduct);
+        amountContainer.appendChild(amount);
+        amountContainer.appendChild(increaseProduct);
 
         product.appendChild(deleteProduct);
         product.appendChild(productImg);
         product.appendChild(productTitle);
         product.appendChild(productDescription);
         product.appendChild(productPrice);
-        product.appendChild(cartAmount);
+        product.appendChild(amountContainer);
 
         cartGoods.appendChild(product);
 

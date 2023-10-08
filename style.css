@@ -9,14 +9,27 @@
     background: #6e28d9;
 }
 
-.container {
+nav {
+    position: absolute;
+    right: 10px;
+    top: 10px;
     display: flex;
     flex-direction: row;
+    justify-content: end;
+    z-index: 100;
+}
+
+#products-container {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    transition: all 0.5s;
+    overflow: hidden;
+    gap: 20px;
 }
 
 #sidebar {
-    width: 40%;
-    min-width: 112px;
+    width: 100%;
     max-width: 350px;
     height: 100vh;
     padding: 0 20px;
@@ -25,8 +38,6 @@
     flex-direction: column;
     justify-content: start;
     align-items: center;
-    position: relative;
-    transition: all 0.5s;
 }
 
 #sidebar-box {
@@ -36,7 +47,6 @@
     border: 4px solid #9932CC;
     border-radius: 25px;
     transition: all 0.5s;
-    margin: 10px 10px auto auto;
     display: flex;
     position: relative;
     opacity: 70%;
@@ -80,27 +90,35 @@
     font-weight: bold;
 }
 
-#cart-goods {
+#goods {
+    flex-grow: 1;
+    margin-top: 100px;
+    background: #9932CC;
+    padding: 20px;
+    border-radius: 25px;
+}
+
+#cart-goods, #goods {
     width: 100%;
     align-items: center;
     display: flex;
     flex-direction: column;
-    margin-bottom: 20px;
     overflow: auto;
+    margin-bottom: 20px;
 }
 
-.cart-goods::-webkit-scrollbar {
+#cart-goods::-webkit-scrollbar, #goods::-webkit-scrollbar {
     width: 10px;
 }
 
-.cart-goods::-webkit-scrollbar-thumb {
+#cart-goods::-webkit-scrollbar-thumb, #goods::-webkit-scrollbar-thumb {
     background: #9932CC;
     background-clip: padding-box;
     border: 3px solid rgba(0, 0, 0, 0);
     border-radius: 10px;
 }
 
-.cart-goods::-webkit-scrollbar-track {
+#cart-goods::-webkit-scrollbar-track, #goods::-webkit-scrollbar-track {
     background: lightgray;
     border-radius: 10px;
 }
@@ -128,6 +146,7 @@
     background: rgb(20,232,112);
     background: radial-gradient(rgba(10,173,141,1) 15%, rgba(20,232,112,1) 100%);
     color: white;
+    border: none;
     border-radius: 25px;
     text-align: center;
     transition: all 0.5s;
@@ -173,6 +192,7 @@
 }
 
 .product-img {
+    background-image: url("https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
@@ -198,26 +218,35 @@
     display: flex;
     flex-direction: column;
     align-items: end;
-    font-size: 10px;
+    font-size: 13px;
     margin-bottom: 5px;
 }
 
-.cart-amount {
+.amount-container {
     height: 20px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
 
-.decrease-product {
+.decrease-product, .increase-product {
     width: 10px;
     height: 100%;
-    background-image: url("/images/minus.png");
+    border: none;
+    background-color: transparent;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     display: inline-block;
     transition: all 0.5s;
+}
+
+.decrease-product {
+    background-image: url("/images/minus.png");
+}
+
+.increase-product {
+    background-image: url("/images/plus.png");
 }
 
 .decrease-product:active {
@@ -230,17 +259,26 @@
     display: inline-block;
 }
 
-.increase-product {
-    width: 10px;
-    height: 100%;
-    background-image: url("/images/plus.png");
+.increase-product:active {
+    scale: 0.8;
+}
+
+.rate {
+    width: 100%;
+    height: 30px;
+    align-items: center;
+    display: inline-block;
+}
+
+.rate-mask {
+    -webkit-mask-image: -webkit-gradient(linear, left 90%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    display: inline-block;
-    transition: all 0.5s;
 }
 
-.increase-product:active {
-    scale: 0.8;
+.rate-count {
+    display: inline-block;
+    color: darkgray;
 }

@@ -12,31 +12,62 @@
 <body>
     <div class="wrapper">
         <div class="container">
-            <aside id="sidebar">
-                <div id="cart-header">
-                    Cart
-                </div>
-                <div id="cart-goods">
+            <nav>
+                <div id="sidebar-box">
+                    <img id="sidebar-icon" src="images/cart.png" alt="=" width="32" height="32">
+                    <div id="products-count">
 
+                    </div>
                 </div>
-                <div id="order-price">
-                    0₽
-                </div>
-                <div class="order">
-                    Order
-                </div>
-            </aside>
-            <script>
-                document.getElementById('sidebar').style.left = `-${document.getElementById('sidebar').offsetWidth}px`;
-            </script>
-            <div id="sidebar-box">
-                <img id="sidebar-icon" src="images/cart.png" alt="=" width="32" height="32">
-                <div id="products-count">
+            </nav>
+            <div id="products-container">
+                <aside id="sidebar">
+                    <div id="cart-header">
+                        Cart
+                    </div>
+                    <div id="cart-goods">
 
+                    </div>
+                    <div id="order-price">
+                        0₽
+                    </div>
+                    <button class="order">
+                        Order
+                    </button>
+                </aside>
+                <script>
+                    document.getElementById('products-container').style.width = `calc(100vw + ${document.getElementById('sidebar').offsetWidth - 20}px)`;
+                    document.getElementById('products-container').style.left = `-${document.getElementById('sidebar').offsetWidth}px`;
+                </script>
+                <div id="goods">
+                    <div class="product">
+                        <div class="product-img"></div>
+                        <div class="rating">
+                            <div class="rate">
+                                <img src="images/stars_gray.png" height="30" class="rate-mask" alt="">
+                                <img src="images/stars_gold.png" height="30" class="rate-mask" alt="">
+                            </div>
+                            <div class="rate-count">
+                                (120)
+                            </div>
+                        </div>
+                        <div class="product-title">
+                            Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops
+                        </div>
+                        <div class="product-description"></div>
+                        <div class="product-price">
+                            <div class="amount-price">
+                                1pc. x 109.95₽
+                            </div>
+                            <div class="total-price">
+                                = 109.95₽
+                            </div>
+                        </div>
+                        <div class="buy-container">
+                            Add to cart
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="goods">
-
             </div>
         </div>
     </div>
