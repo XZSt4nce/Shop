@@ -1,5 +1,5 @@
 class Product {
-    constructor(id, img, title, description, price, rate, rateCount) {
+    constructor(id, img, title, description, price, rate, rateCount, backId) {
         this.id = id;
         this.img = img;
         this.title = title;
@@ -8,6 +8,7 @@ class Product {
         this.rate = rate;
         this.rateCount = rateCount;
         this.cartAmount = 0;
+        this.backId = backId;
     }
 }
 
@@ -15,8 +16,7 @@ const sidebar = document.getElementById('sidebar');
 const sidebarBox = document.getElementById('sidebar-box');
 const cartGoods = document.getElementById('cart-goods');
 const goods = document.getElementById('goods');
-// const buyButton
-// const cart = []; // Хранит id товаров, которые добавлены в корзину
+const cart = []; // Хранит id товаров, которые добавлены в корзину
 
 let isSidebarOpen = false
 let orderPrice = 0; // Цена заказа
@@ -44,11 +44,52 @@ goods.addEventListener('scroll', (event) => {
     }
 })
 
+function updateCartPrice() {
+    orderPrice = Math.round(orderPrice * 100) / 100;
+    document.getElementById('order-price').innerText = `${orderPrice}$`;
+}
+
+function delProduct(id, element, productsAmount, productsBuyContainer) {
+    const product = products[id];
+    orderPrice -= product.cartAmount * product.price;
+    updateCartPrice();
+    product.cartAmount = 0;
+    cartGoods.removeChild(element);
+    productsAmount.style.display = 'none';
+    productsBuyContainer.style.display = '';
+    cart.splice(id, 1);
+}
+
+function decProduct(id, amountPrice, totalPrice, cartAmount, productsAmount, productsBuyContainer) {
+    const cartProduct = products[id];
+    cartProduct.cartAmount--;
+    productsAmount.children[1].innerText = `${cartProduct.cartAmount}pc.`;
+    if (cartProduct.cartAmount === 0) {
+        delProduct(id, cartAmount.parentNode.parentNode, productsAmount, productsBuyContainer);
+    }
+    amountPrice.innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}$`;
+    totalPrice.innerText = `= ${cartProduct.cartAmount * cartProduct.price}$`;
+    cartAmount.innerText = `${cartProduct.cartAmount}pc.`;
+    orderPrice -= cartProduct.price;
+    updateCartPrice();
+}
+
+function incProduct(id, amountPrice, totalPrice, cartAmount, productsAmount) {
+    const cartProduct = products[id];
+    cartProduct.cartAmount++;
+    productsAmount.children[1].innerText = `${cartProduct.cartAmount}pc.`;
+    amountPrice.innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}$`;
+    totalPrice.innerText = `= ${Math.round(cartProduct.cartAmount * cartProduct.price * 100) / 100}$`;
+    cartAmount.innerText = `${cartProduct.cartAmount}pc.`;
+    orderPrice += cartProduct.price;
+    updateCartPrice()
+}
+
 async function loadProducts() {
     if (productsNotOut) {
         const productsLength = products.length + 1;
         let additionProducts = [];
-        for(let i = productsLength; i < productsLength + 10; i++) {
+        for(let i = productsLength; i < productsLength + 2; i++) {
             await axios.get(`https://fakestoreapi.com/products/${i}`)
                 .then(function (response) {
                     const data = response.data;
@@ -63,7 +104,8 @@ async function loadProducts() {
                         data['description'],
                         data['price'],
                         data['rating']['rate'],
-                        data['rating']['count']
+                        data['rating']['count'],
+                        data['id']
                     )
                     additionProducts.push(product);
                 })
@@ -86,10 +128,11 @@ async function loadProducts() {
             const productDescription = document.createElement('div');
             const productPrice = document.createElement('div');
             const buyContainer = document.createElement('button');
-            // const amountContainer = document.createElement('div');
-            // const decreaseProduct = document.createElement('button');
-            // const amount = document.createElement('div');
-            // const increaseProduct = document.createElement('button');
+            const amountContainer = document.createElement('div');
+            const decreaseProduct = document.createElement('button');
+            const amount = document.createElement('div');
+            const increaseProduct = document.createElement('button');
+            let cartProduct;
 
             product.classList.add('product');
             productImg.classList.add('product-img');
@@ -116,15 +159,31 @@ async function loadProducts() {
             productPrice.style.fontSize = '16px';
             buyContainer.classList.add('buy-container');
             buyContainer.innerText = 'Add to cart';
-            // amountContainer.classList.add('amount-container');
-            // decreaseProduct.classList.add('decrease-product');
-            // amount.classList.add('amount');
-            // amount.innerText = '1pc.';
-            // increaseProduct.classList.add('increase-product');
+            amountContainer.classList.add('amount-container');
+            amountContainer.style.display = 'none';
+            decreaseProduct.classList.add('decrease-product');
+            amount.classList.add('amount');
+            increaseProduct.classList.add('increase-product');
 
-            // amountContainer.appendChild(decreaseProduct);
-            // amountContainer.appendChild(amount);
-            // amountContainer.appendChild(increaseProduct);
+            buyContainer.addEventListener('click', () => {
+                cartProduct = addToCart(productObj.id, amountContainer, buyContainer);
+                buyContainer.style.display = 'none';
+                amount.innerText = '1pc.';
+                amountContainer.style.display = '';
+                cart[productObj.id] = productObj.backId;
+            });
+
+            decreaseProduct.addEventListener('click', () => {
+                decProduct(productObj.id, cartProduct.amountPrice, cartProduct.totalPrice, cartProduct.cartAmount, amountContainer, buyContainer);
+            });
+
+            increaseProduct.addEventListener('click', () => {
+                incProduct(productObj.id, cartProduct.amountPrice, cartProduct.totalPrice, cartProduct.cartAmount, amountContainer, buyContainer);
+            })
+
+            amountContainer.appendChild(decreaseProduct);
+            amountContainer.appendChild(amount);
+            amountContainer.appendChild(increaseProduct);
 
             rate.appendChild(starsGray);
             rate.appendChild(starsGold);
@@ -138,51 +197,14 @@ async function loadProducts() {
             product.appendChild(productDescription);
             product.appendChild(productPrice);
             product.appendChild(buyContainer);
-            // product.appendChild(amountContainer);
+            product.appendChild(amountContainer);
 
             goods.appendChild(product);
         })
+        if (goods.scrollHeight === goods.offsetHeight) {
+            loadProducts();
+        }
     }
-}
-
-function updateCartPrice() {
-    orderPrice = Math.round(orderPrice * 100) / 100;
-    document.getElementById('order-price').innerText = `${orderPrice}$`;
-}
-
-function delProduct(id, element, productsAmount, productsBuyContainer) {
-    const product = products[id];
-    orderPrice -= product.cartAmount * product.price;
-    updateCartPrice();
-    product.cartAmount = 0;
-    cartGoods.removeChild(element);
-}
-
-function decProduct(id, amountPrice, totalPrice, cartAmount, productsAmount, productsBuyContainer) {
-
-    const cartProduct = products[id];
-    cartProduct.cartAmount--;
-    // productsAmount.innerText = `${cartProduct.cartAmount}pc.`;
-    if (cartProduct.cartAmount === 0) {
-        // delProduct(cartAmount.parentNode.parentNode, productsAmount.parentNode);
-        delProduct(id, cartAmount.parentNode.parentNode);
-    }
-    amountPrice.innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}$`;
-    totalPrice.innerText = `= ${cartProduct.cartAmount * cartProduct.price}$`;
-    cartAmount.innerText = `${cartProduct.cartAmount}pc.`;
-    orderPrice -= cartProduct.price;
-    updateCartPrice();
-}
-
-function incProduct(id, amountPrice, totalPrice, cartAmount, productsAmount, productsBuyContainer) {
-    const cartProduct = products[id];
-    cartProduct.cartAmount++;
-    // productsAmount.innerText = `${cartProduct.cartAmount}pc.`;
-    amountPrice.innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}$`;
-    totalPrice.innerText = `= ${Math.round(cartProduct.cartAmount * cartProduct.price * 100) / 100}$`;
-    cartAmount.innerText = `${cartProduct.cartAmount}pc.`;
-    orderPrice += cartProduct.price;
-    updateCartPrice()
 }
 
 function addToCart(id, productsAmount, productsBuyContainer) {
@@ -207,8 +229,10 @@ function addToCart(id, productsAmount, productsBuyContainer) {
         productImg.classList.add('product-img');
         productImg.style.backgroundImage = `url("${productObj.img}")`;
         productTitle.classList.add('product-title');
+        productTitle.classList.add('text-wrapper');
         productTitle.innerText = productObj.title;
-        productDescription.classList.add('cart-product-description');
+        productDescription.classList.add('product-description');
+        productDescription.classList.add('text-wrapper');
         productDescriptionLink.innerText = productObj.description;
         productDescriptionLink.href = `#${id}`;
         productPrice.classList.add('product-price');
@@ -223,13 +247,13 @@ function addToCart(id, productsAmount, productsBuyContainer) {
         increaseProduct.classList.add('increase-product');
 
         deleteProduct.addEventListener('click', () => {
-            delProduct(id, product, productsBuyContainer);
+            delProduct(id, product, productsAmount, productsBuyContainer);
         });
         decreaseProduct.addEventListener('click', () => {
-            decProduct(id, amountPrice, totalPrice, amount);
+            decProduct(id, amountPrice, totalPrice, amount, productsAmount, productsBuyContainer);
         });
         increaseProduct.addEventListener('click', () => {
-            incProduct(id, amountPrice, totalPrice, amount);
+            incProduct(id, amountPrice, totalPrice, amount, productsAmount, productsBuyContainer);
         });
 
         productDescription.appendChild(productDescriptionLink);
@@ -250,7 +274,11 @@ function addToCart(id, productsAmount, productsBuyContainer) {
 
         cartGoods.appendChild(product);
         products[id].cartAmount++;
-        return product;
+        return {
+            amountPrice: amountPrice,
+            totalPrice: totalPrice,
+            cartAmount: amount
+        };
     }
     return -1;
 }

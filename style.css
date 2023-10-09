@@ -39,6 +39,7 @@ nav {
     position: absolute;
     transition: all 0.5s;
     z-index: 1;
+    opacity: 90%;
 }
 
 #sidebar-box {
@@ -222,11 +223,11 @@ nav {
     margin-bottom: 5px;
 }
 
-.product-description, .cart-product-description {
+.product-description {
     margin-bottom: 5px;
 }
 
-.cart-product-description {
+.text-wrapper {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
