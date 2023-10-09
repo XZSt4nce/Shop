@@ -5,7 +5,14 @@
     font-family: 'Onest', sans-serif;
 }
 
+body {
+    width: 100vw;
+    height: 100vh;
+}
+
 .wrapper {
+    width: 100vw;
+    height: 100vh;
     background: #6e28d9;
 }
 
@@ -19,25 +26,19 @@ nav {
     z-index: 100;
 }
 
-#products-container {
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    transition: all 0.5s;
-    overflow: hidden;
-    gap: 20px;
-}
-
 #sidebar {
     width: 100%;
-    max-width: 350px;
+    max-width: 240px;
     height: 100vh;
     padding: 0 20px;
     background: #9932CC;
     display: flex;
+    border-radius: 0 25px 25px 0;
     flex-direction: column;
-    justify-content: start;
     align-items: center;
+    position: absolute;
+    transition: all 0.5s;
+    z-index: 1;
 }
 
 #sidebar-box {
@@ -75,7 +76,7 @@ nav {
     margin: auto;
 }
 
-#cart-header {
+.header {
     width: 100%;
     height: 30px;
     border-radius: 25px;
@@ -90,15 +91,31 @@ nav {
     font-weight: bold;
 }
 
-#goods {
-    flex-grow: 1;
-    margin-top: 100px;
-    background: #9932CC;
-    padding: 20px;
-    border-radius: 25px;
+#goods-container {
+    width: 80vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
 }
 
-#cart-goods, #goods {
+#goods-visible {
+    flex-grow: 1;
+    background: mediumpurple;
+    padding: 20px;
+    border-radius: 25px;
+    margin: 100px 0 20px 0;
+}
+
+#goods {
+    height: 100%;
+    border-radius: 25px;
+    scroll-behavior: smooth;
+}
+
+#cart-goods, #goods, #goods-visible {
     width: 100%;
     align-items: center;
     display: flex;
@@ -136,14 +153,13 @@ nav {
     text-align: center;
 }
 
-.order {
+.order, .buy-container {
     width: 100%;
     font-weight: bold;
     font-size: 20px;
     margin-bottom: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
-    background: rgb(20,232,112);
     background: radial-gradient(rgba(10,173,141,1) 15%, rgba(20,232,112,1) 100%);
     color: white;
     border: none;
@@ -152,11 +168,11 @@ nav {
     transition: all 0.5s;
 }
 
-.order:hover {
+.order:hover, .buy-container:hover {
     scale: 0.95;
 }
 
-.order:active {
+.order:active, .buy-container:active {
     scale: 0.9;
 }
 
@@ -206,11 +222,14 @@ nav {
     margin-bottom: 5px;
 }
 
-.product-description {
+.product-description, .cart-product-description {
+    margin-bottom: 5px;
+}
+
+.cart-product-description {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    margin-bottom: 5px;
 }
 
 .product-price {
@@ -266,19 +285,24 @@ nav {
 .rate {
     width: 100%;
     height: 30px;
-    align-items: center;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.rate img {
+    position: absolute;
 }
 
 .rate-mask {
-    -webkit-mask-image: -webkit-gradient(linear, left 90%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
-    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    -webkit-mask-image: -webkit-gradient(linear, 0% 0%, 100% 0%, from(rgba(0,0,0,1)), to(rgba(0,0,0,1)));
+    -webkit-mask-repeat: no-repeat;
+
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 1));
+    mask-repeat: no-repeat;
 }
 
 .rate-count {
-    display: inline-block;
+    text-align: center;
     color: darkgray;
 }

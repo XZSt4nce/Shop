@@ -11,11 +11,10 @@ class Product {
     }
 }
 
-
-const productsContainer = document.getElementById('products-container');
 const sidebar = document.getElementById('sidebar');
 const sidebarBox = document.getElementById('sidebar-box');
 const cartGoods = document.getElementById('cart-goods');
+const goods = document.getElementById('goods');
 // const buyButton
 // const cart = []; // Хранит id товаров, которые добавлены в корзину
 
@@ -28,27 +27,21 @@ loadProducts();
 
 sidebarBox.addEventListener("click", () => {
     if (isSidebarOpen) {
-        productsContainer.style.left = `-${sidebar.offsetWidth}px`;
-        productsContainer.style.width = `calc(100vw + ${sidebar.offsetWidth - 20}px)`;
+        sidebar.style.left = `-${sidebar.offsetWidth}px`;
         isSidebarOpen = false;
     }
     else {
-        productsContainer.style.left = "0";
-        productsContainer.style.width = 'calc(100vw - 20px)';
+        sidebar.style.left = "0";
         isSidebarOpen = true;
     }
 });
 
-window.addEventListener('resize', () => {
-    productsContainer.style.transition = 'none';
-    if (!isSidebarOpen) {
-        productsContainer.style.left = `-${sidebar.offsetWidth}px`;
-        productsContainer.style.width = `calc(100vw + ${sidebar.offsetWidth - 20}px)`;
+goods.addEventListener('scroll', (event) => {
+    if (productsNotOut) {
+        if (event.target.scrollTop + event.target.offsetHeight >= event.target.scrollHeight) {
+            loadProducts();
+        }
     }
-    setTimeout(() => {
-        productsContainer.style.transition = 'all 0.5s';
-    }, 500);
-
 })
 
 async function loadProducts() {
@@ -64,7 +57,7 @@ async function loadProducts() {
                         return;
                     }
                     const product = new Product(
-                        data['id'],
+                        products.length + additionProducts.length,
                         data['image'],
                         data['title'],
                         data['description'],
@@ -79,15 +72,85 @@ async function loadProducts() {
                 })
         }
         products = [...products, ...additionProducts];
+
+        additionProducts.forEach(productObj => {
+            const product = document.createElement('div');
+            product.id = productObj.id;
+            const productImg = document.createElement('div');
+            const rating = document.createElement('div');
+            const rate = document.createElement('div');
+            const starsGray = document.createElement('img');
+            const starsGold = document.createElement('img');
+            const rateCount = document.createElement('div');
+            const productTitle = document.createElement('div');
+            const productDescription = document.createElement('div');
+            const productPrice = document.createElement('div');
+            const buyContainer = document.createElement('button');
+            // const amountContainer = document.createElement('div');
+            // const decreaseProduct = document.createElement('button');
+            // const amount = document.createElement('div');
+            // const increaseProduct = document.createElement('button');
+
+            product.classList.add('product');
+            productImg.classList.add('product-img');
+            productImg.style.backgroundImage = `url("${productObj.img}")`;
+            rating.classList.add('rating');
+            rate.classList.add('rate');
+            starsGray.src = 'images/stars_gray.png';
+            starsGray.height = 30;
+            starsGray.alt = '';
+            starsGold.classList.add('rate-mask');
+            starsGold.style.maskSize = `calc(129px * ${productObj.rate} / 5) 30px`;
+            starsGold.style.webkitMaskSize = `calc(129px * ${productObj.rate} / 5) 30px`;
+            starsGold.src = 'images/stars_gold.png'
+            starsGold.height = 30;
+            starsGold.alt = '';
+            rateCount.classList.add('rate-count');
+            rateCount.innerText = `(${productObj.rateCount})`;
+            productTitle.classList.add('product-title');
+            productTitle.innerText = productObj.title;
+            productDescription.classList.add('product-description');
+            productDescription.innerText = productObj.description;
+            productPrice.classList.add('product-price');
+            productPrice.innerText = `${productObj.price}$`;
+            productPrice.style.fontSize = '16px';
+            buyContainer.classList.add('buy-container');
+            buyContainer.innerText = 'Add to cart';
+            // amountContainer.classList.add('amount-container');
+            // decreaseProduct.classList.add('decrease-product');
+            // amount.classList.add('amount');
+            // amount.innerText = '1pc.';
+            // increaseProduct.classList.add('increase-product');
+
+            // amountContainer.appendChild(decreaseProduct);
+            // amountContainer.appendChild(amount);
+            // amountContainer.appendChild(increaseProduct);
+
+            rate.appendChild(starsGray);
+            rate.appendChild(starsGold);
+
+            rating.appendChild(rate);
+            rating.appendChild(rateCount);
+
+            product.appendChild(productImg);
+            product.appendChild(rating);
+            product.appendChild(productTitle);
+            product.appendChild(productDescription);
+            product.appendChild(productPrice);
+            product.appendChild(buyContainer);
+            // product.appendChild(amountContainer);
+
+            goods.appendChild(product);
+        })
     }
 }
 
 function updateCartPrice() {
     orderPrice = Math.round(orderPrice * 100) / 100;
-    document.getElementById('order-price').innerText = `${orderPrice}₽`;
+    document.getElementById('order-price').innerText = `${orderPrice}$`;
 }
 
-function delProduct(id, element, productsBuyContainer) {
+function delProduct(id, element, productsAmount, productsBuyContainer) {
     const product = products[id];
     orderPrice -= product.cartAmount * product.price;
     updateCartPrice();
@@ -95,7 +158,7 @@ function delProduct(id, element, productsBuyContainer) {
     cartGoods.removeChild(element);
 }
 
-function decProduct(id, amountPrice, totalPrice, cartAmount, productsAmount) {
+function decProduct(id, amountPrice, totalPrice, cartAmount, productsAmount, productsBuyContainer) {
 
     const cartProduct = products[id];
     cartProduct.cartAmount--;
@@ -104,25 +167,25 @@ function decProduct(id, amountPrice, totalPrice, cartAmount, productsAmount) {
         // delProduct(cartAmount.parentNode.parentNode, productsAmount.parentNode);
         delProduct(id, cartAmount.parentNode.parentNode);
     }
-    amountPrice.innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}₽`;
-    totalPrice.innerText = `= ${cartProduct.cartAmount * cartProduct.price}₽`;
+    amountPrice.innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}$`;
+    totalPrice.innerText = `= ${cartProduct.cartAmount * cartProduct.price}$`;
     cartAmount.innerText = `${cartProduct.cartAmount}pc.`;
     orderPrice -= cartProduct.price;
     updateCartPrice();
 }
 
-function incProduct(id, amountPrice, totalPrice, cartAmount, productsAmount) {
+function incProduct(id, amountPrice, totalPrice, cartAmount, productsAmount, productsBuyContainer) {
     const cartProduct = products[id];
     cartProduct.cartAmount++;
     // productsAmount.innerText = `${cartProduct.cartAmount}pc.`;
-    amountPrice.innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}₽`;
-    totalPrice.innerText = `= ${Math.round(cartProduct.cartAmount * cartProduct.price * 100) / 100}₽`;
+    amountPrice.innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}$`;
+    totalPrice.innerText = `= ${Math.round(cartProduct.cartAmount * cartProduct.price * 100) / 100}$`;
     cartAmount.innerText = `${cartProduct.cartAmount}pc.`;
     orderPrice += cartProduct.price;
     updateCartPrice()
 }
 
-function addToCart(id, productsBuyContainer) {
+function addToCart(id, productsAmount, productsBuyContainer) {
     if (products[id].cartAmount === 0) {
         const product = document.createElement('div');
         const deleteProduct = document.createElement('div');
@@ -134,7 +197,7 @@ function addToCart(id, productsBuyContainer) {
         const amountPrice = document.createElement('div');
         const totalPrice = document.createElement('div');
         const amountContainer = document.createElement('div');
-        const decreaseProduct = document.createElement('div');
+        const decreaseProduct = document.createElement('button');
         const amount = document.createElement('div');
         const increaseProduct = document.createElement('button');
         const productObj = products[id];
@@ -145,16 +208,14 @@ function addToCart(id, productsBuyContainer) {
         productImg.style.backgroundImage = `url("${productObj.img}")`;
         productTitle.classList.add('product-title');
         productTitle.innerText = productObj.title;
-        productDescription.classList.add('product-description');
+        productDescription.classList.add('cart-product-description');
         productDescriptionLink.innerText = productObj.description;
         productDescriptionLink.href = `#${id}`;
         productPrice.classList.add('product-price');
-        amountPrice.classList.add('amount-price');
-        amountPrice.innerText = `1pc. x ${productObj.price}₽`
+        amountPrice.innerText = `1pc. x ${productObj.price}$`
         orderPrice += productObj.price;
         updateCartPrice();
-        totalPrice.classList.add('total-price');
-        totalPrice.innerText = `= ${productObj.price}₽`;
+        totalPrice.innerText = `= ${productObj.price}$`;
         amountContainer.classList.add('amount-container');
         decreaseProduct.classList.add('decrease-product');
         amount.classList.add('amount');
@@ -171,6 +232,8 @@ function addToCart(id, productsBuyContainer) {
             incProduct(id, amountPrice, totalPrice, amount);
         });
 
+        productDescription.appendChild(productDescriptionLink);
+
         productPrice.appendChild(amountPrice);
         productPrice.appendChild(totalPrice);
 
@@ -186,7 +249,8 @@ function addToCart(id, productsBuyContainer) {
         product.appendChild(amountContainer);
 
         cartGoods.appendChild(product);
-
         products[id].cartAmount++;
+        return product;
     }
+    return -1;
 }
