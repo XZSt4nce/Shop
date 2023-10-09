@@ -13,19 +13,20 @@ class Product {
 }
 
 const sidebar = document.getElementById('sidebar');
-const sidebarBox = document.getElementById('sidebar-box');
 const cartGoods = document.getElementById('cart-goods');
 const goods = document.getElementById('goods');
+const message = document.getElementById('message');
 const cart = []; // Хранит id товаров, которые добавлены в корзину
 
 let isSidebarOpen = false
+let isMessageNotOpen = true;
 let orderPrice = 0; // Цена заказа
 let products = []; // Загруженный список доступных продуктов
 let productsNotOut = true; // Ещё остались продукты, которые можно дозагрузить в products
 
 loadProducts();
 
-sidebarBox.addEventListener("click", () => {
+document.getElementById('sidebar-box').addEventListener("click", () => {
     if (isSidebarOpen) {
         sidebar.style.left = `-${sidebar.offsetWidth}px`;
         isSidebarOpen = false;
@@ -35,6 +36,25 @@ sidebarBox.addEventListener("click", () => {
         isSidebarOpen = true;
     }
 });
+
+document.getElementById('order').addEventListener('click', () => {
+    if (isMessageNotOpen) {
+        isMessageNotOpen = false;
+        const backIds = cart.filter(id => id);
+        if (backIds.length === 0) {
+            message.style.background = 'red';
+            message.innerText = 'The order is empty!';
+        } else {
+            message.style.background = 'springgreen';
+            message.innerText = 'The order has been placed. Thank you for your purchase!';
+        }
+        message.style.top = '10px';
+        setTimeout(() => {
+            message.style.top = '-100px'
+        }, 2000);
+        setTimeout(() => {isMessageNotOpen = true}, 2500);
+    }
+})
 
 goods.addEventListener('scroll', (event) => {
     if (productsNotOut) {
@@ -57,7 +77,7 @@ function delProduct(id, element, productsAmount, productsBuyContainer) {
     cartGoods.removeChild(element);
     productsAmount.style.display = 'none';
     productsBuyContainer.style.display = '';
-    cart.splice(id, 1);
+    cart.splice(cart.indexOf(id), 1);
 }
 
 function decProduct(id, amountPrice, totalPrice, cartAmount, productsAmount, productsBuyContainer) {
