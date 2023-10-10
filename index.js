@@ -14,6 +14,7 @@ class Product {
 
 const sidebar = document.getElementById('sidebar');
 const cartGoods = document.getElementById('cart-goods');
+const goodsVisible = document.getElementById('goods-visible');
 const goods = document.getElementById('goods');
 const message = document.getElementById('message');
 const cart = []; // Хранит id товаров, которые добавлены в корзину
@@ -56,9 +57,9 @@ document.getElementById('order').addEventListener('click', () => {
     }
 })
 
-goods.addEventListener('scroll', (event) => {
+goodsVisible.addEventListener('scroll', (event) => {
     if (productsNotOut) {
-        if (event.target.scrollTop + event.target.offsetHeight >= event.target.scrollHeight) {
+        if (event.target.scrollTop + event.target.offsetHeight === event.target.scrollHeight) {
             loadProducts();
         }
     }
@@ -109,7 +110,7 @@ async function loadProducts() {
     if (productsNotOut) {
         const productsLength = products.length + 1;
         let additionProducts = [];
-        for(let i = productsLength; i < productsLength + 2; i++) {
+        for(let i = productsLength; i < productsLength + 3; i++) {
             await axios.get(`https://fakestoreapi.com/products/${i}`)
                 .then(function (response) {
                     const data = response.data;
@@ -221,7 +222,7 @@ async function loadProducts() {
 
             goods.appendChild(product);
         })
-        if (goods.scrollHeight === goods.offsetHeight) {
+        if (goodsVisible.clientHeight === goodsVisible.scrollHeight) {
             loadProducts();
         }
     }
