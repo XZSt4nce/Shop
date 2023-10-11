@@ -1,7 +1,6 @@
 * {
     margin: 0;
     padding: 0;
-    user-select: none;
     font-family: 'Onest', sans-serif;
 }
 
@@ -104,7 +103,6 @@ nav {
 }
 
 #goods-visible {
-    flex-grow: 1;
     background: mediumpurple;
     padding: 20px;
     border-radius: 25px;
@@ -112,13 +110,11 @@ nav {
 }
 
 #goods {
-    height: 100%;
     border-radius: 25px;
     scroll-behavior: smooth;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     grid-gap: 10px;
-    padding-bottom: 20px;
 }
 
 #cart-goods, #goods-visible {
