@@ -12,33 +12,29 @@ class Product {
     }
 }
 
-const sidebar = document.getElementById('sidebar');
-const cartGoods = document.getElementById('cart-goods');
-const goodsVisible = document.getElementById('goods-visible');
-const goods = document.getElementById('goods');
-const message = document.getElementById('message');
 const cart = []; // Хранит id товаров, которые добавлены в корзину
-
 let isSidebarOpen = false
 let isMessageNotOpen = true;
 let orderPrice = 0; // Цена заказа
 let products = []; // Загруженный список доступных продуктов
+let productsCount = 0; // Количество уникальных товаров, добавленных в корзину
 let productsNotOut = true; // Ещё остались продукты, которые можно дозагрузить в products
 
 loadProducts();
 
 document.getElementById('sidebar-box').addEventListener("click", () => {
     if (isSidebarOpen) {
-        sidebar.style.left = `-${sidebar.offsetWidth}px`;
+        document.getElementById('sidebar').style.left = `-${document.getElementById('sidebar').offsetWidth}px`;
         isSidebarOpen = false;
     }
     else {
-        sidebar.style.left = "0";
+        document.getElementById('sidebar').style.left = "0";
         isSidebarOpen = true;
     }
 });
 
 document.getElementById('order').addEventListener('click', () => {
+    const message = document.getElementById('message');
     if (isMessageNotOpen) {
         isMessageNotOpen = false;
         const backIds = cart.filter(id => id);
@@ -57,7 +53,7 @@ document.getElementById('order').addEventListener('click', () => {
     }
 })
 
-goodsVisible.addEventListener('scroll', (event) => {
+document.getElementById('goods-visible').addEventListener('scroll', (event) => {
     if (productsNotOut) {
         if (event.target.scrollTop + event.target.offsetHeight === event.target.scrollHeight) {
             loadProducts();
@@ -75,10 +71,15 @@ function delProduct(id, element, productsAmount, productsBuyContainer) {
     orderPrice -= product.cartAmount * product.price;
     updateCartPrice();
     product.cartAmount = 0;
-    cartGoods.removeChild(element);
+    document.getElementById('cart-goods').removeChild(element);
     productsAmount.style.display = 'none';
     productsBuyContainer.style.display = '';
     cart.splice(cart.indexOf(id), 1);
+    productsCount--;
+    document.getElementById('products-count').innerText = `${productsCount}`;
+    if (productsCount === 0) {
+        document.getElementById('products-count').style.display = '';
+    }
 }
 
 function decProduct(id, amountPrice, totalPrice, cartAmount, productsAmount, productsBuyContainer) {
@@ -220,10 +221,10 @@ async function loadProducts() {
             product.appendChild(buyContainer);
             product.appendChild(amountContainer);
 
-            goods.appendChild(product);
+            document.getElementById('goods').appendChild(product);
         })
-        if (goodsVisible.clientHeight === goodsVisible.scrollHeight) {
-            loadProducts();
+        if (document.getElementById('goods-visible').clientHeight === document.getElementById('goods-visible').scrollHeight) {
+            await loadProducts();
         }
     }
 }
@@ -293,8 +294,11 @@ function addToCart(id, productsAmount, productsBuyContainer) {
         product.appendChild(productPrice);
         product.appendChild(amountContainer);
 
-        cartGoods.appendChild(product);
+        document.getElementById('cart-goods').appendChild(product);
         products[id].cartAmount++;
+        productsCount++;
+        document.getElementById('products-count').innerText = `${productsCount}`;
+        document.getElementById('products-count').style.display = 'initial';
         return {
             amountPrice: amountPrice,
             totalPrice: totalPrice,

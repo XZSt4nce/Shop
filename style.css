@@ -184,7 +184,6 @@ nav {
 
 .product {
     width: calc(100% - 20px);
-    height: 685px;
     display: flex;
     flex-direction: column;
     background: white;
