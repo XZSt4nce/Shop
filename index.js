@@ -38,7 +38,8 @@ document.getElementById('order').addEventListener('click', () => {
     if (isMessageNotOpen) {
         isMessageNotOpen = false;
         const backIds = cart.filter(id => id);
-        if (backIds.length === 0) {
+        console.log(backIds)
+        if (productsCount === 0) {
             message.style.background = 'red';
             message.innerText = 'The order is empty!';
         } else {
@@ -66,14 +67,22 @@ function updateCartPrice() {
     document.getElementById('order-price').innerText = `${orderPrice}$`;
 }
 
-function delProduct(id, element, productsAmount, productsBuyContainer) {
+function buy(event, id, backId) {
+    addToCart(id, document.getElementById(`ac${id}`), event.target);
+    event.target.style.display = 'none';
+    document.getElementById(`pam${id}`).innerText = '1pc.';
+    document.getElementById(`pac${id}`).style.display = '';
+    cart[id] = backId;
+}
+
+function delProduct(id) {
     const product = products[id];
     orderPrice -= product.cartAmount * product.price;
     updateCartPrice();
     product.cartAmount = 0;
-    document.getElementById('cart-goods').removeChild(element);
-    productsAmount.style.display = 'none';
-    productsBuyContainer.style.display = '';
+    document.getElementById(`cg${id}`).remove();
+    document.getElementById(`pac${id}`).style.display = 'none';
+    document.getElementById(`bc${id}`).style.display = '';
     cart.splice(cart.indexOf(id), 1);
     productsCount--;
     document.getElementById('products-count').innerText = `${productsCount}`;
@@ -82,27 +91,26 @@ function delProduct(id, element, productsAmount, productsBuyContainer) {
     }
 }
 
-function decProduct(id, amountPrice, totalPrice, cartAmount, productsAmount, productsBuyContainer) {
-    const cartProduct = products[id];
-    cartProduct.cartAmount--;
-    productsAmount.children[1].innerText = `${cartProduct.cartAmount}pc.`;
-    if (cartProduct.cartAmount === 0) {
-        delProduct(id, cartAmount.parentNode.parentNode, productsAmount, productsBuyContainer);
+function decProduct(id) {
+    products[id].cartAmount--;
+    document.getElementById(`ap${id}`).innerText = `${products[id].cartAmount}pc. x ${products[id].price}$`;
+    document.getElementById(`tp${id}`).innerText = `= ${products[id].cartAmount * products[id].price}$`;
+    document.getElementById(`cam${id}`).innerText = `${products[id].cartAmount}pc.`;
+    document.getElementById(`pam${id}`).innerText = `${products[id].cartAmount}pc.`;
+    if (products[id].cartAmount === 0) {
+        delProduct(id);
     }
-    amountPrice.innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}$`;
-    totalPrice.innerText = `= ${cartProduct.cartAmount * cartProduct.price}$`;
-    cartAmount.innerText = `${cartProduct.cartAmount}pc.`;
-    orderPrice -= cartProduct.price;
+    orderPrice -= products[id].price;
     updateCartPrice();
 }
 
-function incProduct(id, amountPrice, totalPrice, cartAmount, productsAmount) {
+function incProduct(id) {
     const cartProduct = products[id];
     cartProduct.cartAmount++;
-    productsAmount.children[1].innerText = `${cartProduct.cartAmount}pc.`;
-    amountPrice.innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}$`;
-    totalPrice.innerText = `= ${Math.round(cartProduct.cartAmount * cartProduct.price * 100) / 100}$`;
-    cartAmount.innerText = `${cartProduct.cartAmount}pc.`;
+    document.getElementById(`pam${id}`).innerText = `${cartProduct.cartAmount}pc.`;
+    document.getElementById(`ap${id}`).innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}$`;
+    document.getElementById(`tp${id}`).innerText = `= ${Math.round(cartProduct.cartAmount * cartProduct.price * 100) / 100}$`;
+    document.getElementById(`cam${id}`).innerText = `${cartProduct.cartAmount}pc.`;
     orderPrice += cartProduct.price;
     updateCartPrice()
 }
@@ -138,172 +146,87 @@ async function loadProducts() {
         products = [...products, ...additionProducts];
 
         additionProducts.forEach(productObj => {
-            const product = document.createElement('div');
-            product.id = productObj.id;
-            const productImg = document.createElement('div');
-            const rating = document.createElement('div');
-            const rate = document.createElement('div');
-            const starsGray = document.createElement('img');
-            const starsGold = document.createElement('img');
-            const rateCount = document.createElement('div');
-            const productTitle = document.createElement('div');
-            const productDescription = document.createElement('div');
-            const productPrice = document.createElement('div');
-            const buyContainer = document.createElement('button');
-            const amountContainer = document.createElement('div');
-            const decreaseProduct = document.createElement('button');
-            const amount = document.createElement('div');
-            const increaseProduct = document.createElement('button');
-            let cartProduct;
-
-            product.classList.add('product');
-            productImg.classList.add('product-img');
-            productImg.style.backgroundImage = `url("${productObj.img}")`;
-            rating.classList.add('rating');
-            rate.classList.add('rate');
-            starsGray.src = 'images/stars_gray.png';
-            starsGray.height = 30;
-            starsGray.alt = '';
-            starsGold.classList.add('rate-mask');
-            starsGold.style.maskSize = `calc(129px * ${productObj.rate} / 5) 30px`;
-            starsGold.style.webkitMaskSize = `calc(129px * ${productObj.rate} / 5) 30px`;
-            starsGold.src = 'images/stars_gold.png'
-            starsGold.height = 30;
-            starsGold.alt = '';
-            rateCount.classList.add('rate-count');
-            rateCount.innerText = `(${productObj.rateCount})`;
-            productTitle.classList.add('product-title');
-            productTitle.innerText = productObj.title;
-            productDescription.classList.add('product-description');
-            productDescription.innerText = productObj.description;
-            productPrice.classList.add('product-price');
-            productPrice.innerText = `${productObj.price}$`;
-            productPrice.style.fontSize = '16px';
-            buyContainer.classList.add('buy-container');
-            buyContainer.innerText = 'Add to cart';
-            amountContainer.classList.add('amount-container');
-            amountContainer.style.display = 'none';
-            decreaseProduct.classList.add('decrease-product');
-            amount.classList.add('amount');
-            increaseProduct.classList.add('increase-product');
-
-            buyContainer.addEventListener('click', () => {
-                cartProduct = addToCart(productObj.id, amountContainer, buyContainer);
-                buyContainer.style.display = 'none';
-                amount.innerText = '1pc.';
-                amountContainer.style.display = '';
-                cart[productObj.id] = productObj.backId;
-            });
-
-            decreaseProduct.addEventListener('click', () => {
-                decProduct(productObj.id, cartProduct.amountPrice, cartProduct.totalPrice, cartProduct.cartAmount, amountContainer, buyContainer);
-            });
-
-            increaseProduct.addEventListener('click', () => {
-                incProduct(productObj.id, cartProduct.amountPrice, cartProduct.totalPrice, cartProduct.cartAmount, amountContainer, buyContainer);
-            })
-
-            amountContainer.appendChild(decreaseProduct);
-            amountContainer.appendChild(amount);
-            amountContainer.appendChild(increaseProduct);
-
-            rate.appendChild(starsGray);
-            rate.appendChild(starsGold);
-
-            rating.appendChild(rate);
-            rating.appendChild(rateCount);
-
-            product.appendChild(productImg);
-            product.appendChild(rating);
-            product.appendChild(productTitle);
-            product.appendChild(productDescription);
-            product.appendChild(productPrice);
-            product.appendChild(buyContainer);
-            product.appendChild(amountContainer);
-
-            document.getElementById('goods').appendChild(product);
+            document.getElementById('goods').innerHTML += `
+                <div id="${productObj.id}" class="product">
+                    <div class="product-img" style="background-image: url('${productObj.img}');"></div>
+                    <div class="rating">
+                        <div class="rate">
+                            <img src="images/stars_gray.png" height="30" alt="">
+                            <img class="rate-mask" src="images/stars_gold.png" height="30" alt="" style="-webkit-mask-size: calc(129px * ${productObj.rate} / 5) 30px; mask-size: calc(129px * ${productObj.rate} / 5) 30px;">
+                        </div>
+                        <div class="rate-count">
+                            (${productObj.rateCount})
+                        </div>
+                    </div>
+                    <div class="product-title">
+                        ${productObj.title}
+                    </div>
+                    <div class="product-description">
+                        ${productObj.description}
+                    </div>
+                    <div class="product-price" style="font-size: 16px;">
+                        ${productObj.price}$
+                    </div>
+                    <button class="buy-container" id="bc${productObj.id}" onclick="buy(event, ${productObj.id}, ${productObj.backId})">
+                        Add to cart
+                    </button>
+                    <div class="amount-container" id="pac${productObj.id}" style="display: none">
+                        <button class="change-count-product" style="background-image: url('/images/minus.png');" onclick="decProduct(${productObj.id})"></button>
+                        <div class="amount" id="pam${productObj.id}">
+                            1pc.
+                        </div>
+                        <button class="change-count-product" style="background-image: url('/images/plus.png');" onclick="incProduct(${productObj.id})"></button>
+                    </div>
+                </div>
+            `;
         })
+
         if (document.getElementById('goods-visible').clientHeight === document.getElementById('goods-visible').scrollHeight) {
             await loadProducts();
         }
     }
 }
 
-function addToCart(id, productsAmount, productsBuyContainer) {
+function addToCart(id) {
     if (products[id].cartAmount === 0) {
-        const product = document.createElement('div');
-        const deleteProduct = document.createElement('div');
-        const productImg = document.createElement('div');
-        const productTitle = document.createElement('div');
-        const productDescription = document.createElement('div');
-        const productDescriptionLink = document.createElement('a');
-        const productPrice = document.createElement('div');
-        const amountPrice = document.createElement('div');
-        const totalPrice = document.createElement('div');
-        const amountContainer = document.createElement('div');
-        const decreaseProduct = document.createElement('button');
-        const amount = document.createElement('div');
-        const increaseProduct = document.createElement('button');
-        const productObj = products[id];
-
-        product.classList.add('product');
-        deleteProduct.classList.add('delete-product');
-        productImg.classList.add('product-img');
-        productImg.style.backgroundImage = `url("${productObj.img}")`;
-        productTitle.classList.add('product-title');
-        productTitle.classList.add('text-wrapper');
-        productTitle.innerText = productObj.title;
-        productDescription.classList.add('product-description');
-        productDescription.classList.add('text-wrapper');
-        productDescriptionLink.innerText = productObj.description;
-        productDescriptionLink.href = `#${id}`;
-        productPrice.classList.add('product-price');
-        amountPrice.innerText = `1pc. x ${productObj.price}$`
-        orderPrice += productObj.price;
+        orderPrice += products[id].price;
         updateCartPrice();
-        totalPrice.innerText = `= ${productObj.price}$`;
-        amountContainer.classList.add('amount-container');
-        decreaseProduct.classList.add('decrease-product');
-        amount.classList.add('amount');
-        amount.innerText = '1pc.';
-        increaseProduct.classList.add('increase-product');
 
-        deleteProduct.addEventListener('click', () => {
-            delProduct(id, product, productsAmount, productsBuyContainer);
-        });
-        decreaseProduct.addEventListener('click', () => {
-            decProduct(id, amountPrice, totalPrice, amount, productsAmount, productsBuyContainer);
-        });
-        increaseProduct.addEventListener('click', () => {
-            incProduct(id, amountPrice, totalPrice, amount, productsAmount, productsBuyContainer);
-        });
+        document.getElementById('cart-goods').innerHTML += `
+            <div class="product" id="cg${id}">
+                <div class="delete-product" onclick="delProduct(${id})"></div>
+                <div class="product-img" style="background-image: url('${products[id].img}')"></div>
+                <div class="product-title text-wrapper">
+                    <a href="#${id}" style="text-decoration: none; color: black;">
+                        ${products[id].title}
+                    </a>
+                </div>
+                <div class="product-description text-wrapper">
+                    <a href="#${id}">
+                        ${products[id].description}
+                    </a>
+                </div>
+                <div class="product-price">
+                    <div id="ap${id}">
+                        1pc. x ${products[id].price}$
+                    </div>
+                    <div id="tp${id}">
+                        = ${products[id].price}$
+                    </div>
+                </div>
+                <div class="amount-container">
+                    <button class="change-count-product" style="background-image: url('/images/minus.png');" onclick="decProduct(${id})"></button>
+                    <div class="amount" id="cam${id}">
+                        1pc.
+                    </div>
+                    <button class="change-count-product" style="background-image: url('/images/plus.png');" onclick="incProduct(${id})"></button>
+                </div>
+            </div>
+        `;
 
-        productDescription.appendChild(productDescriptionLink);
-
-        productPrice.appendChild(amountPrice);
-        productPrice.appendChild(totalPrice);
-
-        amountContainer.appendChild(decreaseProduct);
-        amountContainer.appendChild(amount);
-        amountContainer.appendChild(increaseProduct);
-
-        product.appendChild(deleteProduct);
-        product.appendChild(productImg);
-        product.appendChild(productTitle);
-        product.appendChild(productDescription);
-        product.appendChild(productPrice);
-        product.appendChild(amountContainer);
-
-        document.getElementById('cart-goods').appendChild(product);
         products[id].cartAmount++;
         productsCount++;
         document.getElementById('products-count').innerText = `${productsCount}`;
         document.getElementById('products-count').style.display = 'initial';
-        return {
-            amountPrice: amountPrice,
-            totalPrice: totalPrice,
-            cartAmount: amount
-        };
     }
-    return -1;
 }

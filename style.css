@@ -212,7 +212,6 @@ nav {
 }
 
 .product-img {
-    background-image: url("https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
@@ -254,7 +253,7 @@ nav {
     justify-content: space-between;
 }
 
-.decrease-product, .increase-product {
+.change-count-product {
     width: 10px;
     height: 100%;
     border: none;
@@ -266,15 +265,7 @@ nav {
     transition: 0.5s;
 }
 
-.decrease-product {
-    background-image: url("/images/minus.png");
-}
-
-.increase-product {
-    background-image: url("/images/plus.png");
-}
-
-.decrease-product:active {
+.change-count-product:active {
     scale: 0.8;
 }
 
@@ -282,10 +273,6 @@ nav {
     text-align: center;
     font-weight: bold;
     display: inline-block;
-}
-
-.increase-product:active {
-    scale: 0.8;
 }
 
 .rate {
