@@ -12,7 +12,8 @@ body {
 .wrapper {
     width: 100vw;
     height: 100vh;
-    background: #6e28d9;
+    background: rgb(116,1,230);
+    background: linear-gradient(120deg, rgba(116,1,230,1) 0%, rgba(171,0,255,1) 65%);
 }
 
 nav {
@@ -105,7 +106,7 @@ nav {
 #goods-visible {
     background: mediumpurple;
     padding: 20px;
-    border-radius: 25px;
+    border-radius: 25px 10px 10px 25px;
     margin-top: 100px;
 }
 
@@ -128,19 +129,19 @@ nav {
 }
 
 #cart-goods::-webkit-scrollbar, #goods-visible::-webkit-scrollbar {
-    width: 10px;
+    width: 15px;
 }
 
 #cart-goods::-webkit-scrollbar-thumb, #goods-visible::-webkit-scrollbar-thumb {
-    background: #9932CC;
+    background: mediumpurple;
     background-clip: padding-box;
     border: 3px solid rgba(0, 0, 0, 0);
-    border-radius: 10px;
+    border-radius: 0 10px 10px 0;
 }
 
 #cart-goods::-webkit-scrollbar-track, #goods-visible::-webkit-scrollbar-track {
     background: lightgray;
-    border-radius: 10px;
+    border-radius: 0 10px 10px 0;
 }
 
 #order-price {
