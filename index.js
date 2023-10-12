@@ -217,7 +217,12 @@ function loadProducts() {
     // Display additional 3 products
     const productsShowed = document.getElementById('goods').children.length;
     for(let i = productsShowed; i < productsShowed + 3; i++) {
-        displayProduct(products[i]);
+        try{
+            displayProduct(products[i]);
+        }
+        catch {
+            break;
+        }
     }
 
     // If the scrollbar didn't appear
