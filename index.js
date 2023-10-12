@@ -68,12 +68,10 @@ document.getElementById('goods-visible').addEventListener('scroll', (event) => {
     }
 })
 
-
 /**
  * @async
  * This function pulls out a json object with products
  */
-
 async function getProducts() {
     await axios.get('https://fakestoreapi.com/products/')
         .then(function (response) {
