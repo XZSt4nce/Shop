@@ -29,17 +29,21 @@ getProducts()
 
 document.getElementById('sidebar-box').addEventListener("click", () => {
     if (document.getElementById('sidebar').offsetLeft === 0) {
-        document.getElementById('sidebar').style.left = `-${document.getElementById('sidebar').offsetWidth}px`; // Hide sidebar
+        // Hide sidebar
+        document.getElementById('sidebar').style.left = `-${document.getElementById('sidebar').offsetWidth}px`;
     }
     else if (document.getElementById('sidebar').offsetLeft === -document.getElementById('sidebar').offsetWidth) {
-        document.getElementById('sidebar').style.left = "0"; // Show sidebar
+        // Show sidebar
+        document.getElementById('sidebar').style.left = "0";
     }
 });
 
 document.getElementById('order').addEventListener('click', () => {
     const message = document.getElementById('message');
-    if (message.offsetTop === -100) { // If the message is hidden
-        if (cart.ids.length === 0) { // If the cart is empty
+    // If the message is hidden
+    if (message.offsetTop === -100) {
+        // If the cart is empty
+        if (cart.ids.length === 0) {
             message.style.background = 'red';
             message.innerText = 'The order is empty!';
         } else {
@@ -55,6 +59,7 @@ document.getElementById('order').addEventListener('click', () => {
         }
         // Show message
         message.style.top = '10px';
+
         // Hide message after 2 seconds
         setTimeout(() => {
             message.style.top = '-100px'
@@ -63,7 +68,8 @@ document.getElementById('order').addEventListener('click', () => {
 })
 
 document.getElementById('goods-visible').addEventListener('scroll', (event) => {
-    if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) { // If you have reached the end of the list of products
+    // If you have reached the end of the list of products
+    if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
         loadProducts();
     }
 })
@@ -98,11 +104,16 @@ async function getProducts() {
  * This function displays the quantity of unique products on the sidebar-box
  */
 function updateProductsCount() {
-    document.getElementById('products-count').style.display = 'initial'; // Display the quantity of products on the sidebar-box button
-    document.getElementById('products-count').innerText = `${cart.ids.length}`; // Change the quantity of products on the sidebar-box button
+    // Display the quantity of products on the sidebar-box button
+    document.getElementById('products-count').style.display = 'initial';
+
+    // Change the quantity of products on the sidebar-box button
+    document.getElementById('products-count').innerText = `${cart.ids.length}`;
+
     // If the cart is empty
     if (cart.ids.length === 0) {
-        document.getElementById('products-count').style.display = ''; // Stop displaying the quantity of products on the sidebar-box button
+        // Stop displaying the quantity of products on the sidebar-box button
+        document.getElementById('products-count').style.display = '';
     }
 }
 
@@ -154,10 +165,18 @@ function buy(productObj) {
  * @param {product} cartProduct Product in the cart
  */
 function delProduct(cartProduct) {
-    document.getElementById(`cart-good${cartProduct.id}`).remove(); // Removing an HTML product element from the cart
-    document.getElementById(`product-amount-container${cartProduct.id}`).style.display = 'none'; // Stop displaying the quantity of the product
-    document.getElementById(`buy-container${cartProduct.id}`).style.display = ''; // Display the product purchase button
-    cart.ids.splice(cart.ids.indexOf(cartProduct.id), 1); // Remove the product id from the cart
+    // Removing an HTML product element from the cart
+    document.getElementById(`cart-good${cartProduct.id}`).remove();
+
+    // Stop displaying the quantity of the product
+    document.getElementById(`product-amount-container${cartProduct.id}`).style.display = 'none';
+
+    // Display the product purchase button
+    document.getElementById(`buy-container${cartProduct.id}`).style.display = '';
+
+    // Remove the product id from the cart
+    cart.ids.splice(cart.ids.indexOf(cartProduct.id), 1);
+
     updateProductsCount();
     updateCartPrice(-cartProduct.price * cartProduct.cartAmount);
 }
@@ -168,11 +187,21 @@ function delProduct(cartProduct) {
  * @param {boolean} isIncreased Increase if true, otherwise decrease
  */
 function changeCountProduct(productObj, isIncreased) {
-    productObj.cartAmount += 2 * isIncreased - 1; // Decrease/increase the quantity of ordered goods
-    document.getElementById(`amount-price${productObj.id}`).innerText = `${productObj.cartAmount}pc. x ${productObj.price}$`; // (quantity X price) is indicated in the cart
-    document.getElementById(`total-price${productObj.id}`).innerText = `= ${Math.round(productObj.cartAmount * productObj.price * 100) / 100}$`; // The total price for the entire quantity of a particular product is indicated in the cart
-    document.getElementById(`cart-amount${productObj.id}`).innerText = `${productObj.cartAmount}pc.`; // How many specific items are ordered in the cart
-    document.getElementById(`product-amount${productObj.id}`).innerText = `${productObj.cartAmount}pc.`; // How many specific items are ordered in the list of products
+    // Decrease/increase the quantity of ordered goods
+    productObj.cartAmount += 2 * isIncreased - 1;
+
+    // (quantity X price) is indicated in the cart
+    document.getElementById(`amount-price${productObj.id}`).innerText = `${productObj.cartAmount}pc. x ${productObj.price}$`;
+
+    // The total price for the entire quantity of a particular product is indicated in the cart
+    document.getElementById(`total-price${productObj.id}`).innerText = `= ${Math.round(productObj.cartAmount * productObj.price * 100) / 100}$`;
+
+    // How many specific items are ordered in the cart
+    document.getElementById(`cart-amount${productObj.id}`).innerText = `${productObj.cartAmount}pc.`;
+
+    // How many specific items are ordered in the list of products
+    document.getElementById(`product-amount${productObj.id}`).innerText = `${productObj.cartAmount}pc.`;
+
     // If 0 specific items are ordered
     if (productObj.cartAmount === 0) {
         delProduct(productObj);
