@@ -257,7 +257,7 @@ function displayProduct(productObj) {
     const starsGold = document.createElement('img');
     const rateCount = document.createElement('div');
     const productTitle = document.createElement('div');
-    const productDescription = document.createElement('a');
+    const productDescription = document.createElement('div');
     const productPrice = document.createElement('div');
     const buyContainer = document.createElement('button');
     const amountContainer = document.createElement('div');
@@ -294,9 +294,9 @@ function displayProduct(productObj) {
     productTitle.classList.add('text-wrapper');
     productTitle.innerText = productObj.title;
 
-    productDescription.innerText = `${productObj.description}`;
     productDescription.classList.add('product-description');
     productDescription.classList.add('text-wrapper');
+    productDescription.innerText = `${productObj.description}`;
 
     productPrice.classList.add('product-price');
     productPrice.innerText = `${productObj.price}$`;

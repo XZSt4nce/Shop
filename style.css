@@ -12,8 +12,8 @@ body {
 .wrapper {
     width: 100vw;
     height: 100vh;
-    background: rgb(116,1,230);
-    background: linear-gradient(120deg, rgba(116,1,230,1) 0%, rgba(171,0,255,1) 65%);
+    background: rgb(145,33,255);
+    background: linear-gradient(120deg, rgba(145,33,255,1) 0%, rgba(190,57,255,1) 65%);
 }
 
 nav {
@@ -104,7 +104,7 @@ nav {
 }
 
 #goods-visible {
-    background: mediumpurple;
+    background: purple;
     padding: 20px;
     border-radius: 25px 10px 10px 25px;
     margin-top: 100px;
@@ -133,7 +133,7 @@ nav {
 }
 
 #cart-goods::-webkit-scrollbar-thumb, #goods-visible::-webkit-scrollbar-thumb {
-    background: mediumpurple;
+    background: purple;
     background-clip: padding-box;
     border: 3px solid rgba(0, 0, 0, 0);
     border-radius: 0 10px 10px 0;
@@ -300,7 +300,6 @@ nav {
 
 .rate-count {
     text-align: center;
-    color: darkgray;
 }
 
 #message {
