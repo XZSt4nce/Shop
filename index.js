@@ -11,11 +11,19 @@
  * @property {number} cartAmount - Quantity of the product added to the cart
 */
 
+/**
+ * Info about cart
+ * @const {{ ids: *[uint], orderPrice: uint}}
+ */
 const cart = {
     ids: [], // ids of the products that are added to the cart
     orderPrice: 0
 }
-const products = []; // Loaded list of available products
+/**
+ * Loaded list of available products
+ * @const {*[]}
+ */
+const products = [];
 
 getProducts()
 
