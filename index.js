@@ -1,52 +1,70 @@
+/**
+ * A product
+ * @typedef {Object} product
+ * @property {uint} id - Product id
+ * @property {image} image - Product image
+ * @property {string} title - Product title
+ * @property {number} description - Product description
+ * @property {number} price - Product price
+ * @property {number} rateValue - Average product rating
+ * @property {number} rateCount - Quantity of the product ratings
+ * @property {number} cartAmount - Quantity of the product added to the cart
+*/
+
 const cart = {
-    ids: [], // id товаров, которые добавлены в корзину
-    orderPrice: 0 // Цена заказа
+    ids: [], // ids of the products that are added to the cart
+    orderPrice: 0
 }
+const products = []; // Loaded list of available products
 
-let isSidebarOpen = false
-let isMessageNotOpen = true;
-let products = []; // Загруженный список доступных продуктов
-
-getProducts();
+getProducts()
 
 document.getElementById('sidebar-box').addEventListener("click", () => {
-    if (isSidebarOpen) {
-        document.getElementById('sidebar').style.left = `-${document.getElementById('sidebar').offsetWidth}px`;
-        isSidebarOpen = false;
+    if (document.getElementById('sidebar').offsetLeft === 0) {
+        document.getElementById('sidebar').style.left = `-${document.getElementById('sidebar').offsetWidth}px`; // Hide sidebar
     }
-    else {
-        document.getElementById('sidebar').style.left = "0";
-        isSidebarOpen = true;
+    else if (document.getElementById('sidebar').offsetLeft === -document.getElementById('sidebar').offsetWidth) {
+        document.getElementById('sidebar').style.left = "0"; // Show sidebar
     }
 });
 
 document.getElementById('order').addEventListener('click', () => {
     const message = document.getElementById('message');
-    if (isMessageNotOpen) {
-        isMessageNotOpen = false;
-        if (cart.ids.length === 0) {
+    if (message.offsetTop === -100) { // If the message is hidden
+        if (cart.ids.length === 0) { // If the cart is empty
             message.style.background = 'red';
             message.innerText = 'The order is empty!';
         } else {
+            // Output of ordered goods to the console
             const cartProducts = [];
             for (let i = 0; i < cart.ids.length; i++) {
                 cartProducts.push(getProductById(cart.ids[i]));
             }
             console.log(cartProducts);
+
             message.style.background = 'springgreen';
             message.innerText = 'The order has been placed. Thank you for your purchase!';
         }
+        // Show message
         message.style.top = '10px';
+        // Hide message after 2 seconds
         setTimeout(() => {
             message.style.top = '-100px'
         }, 2000);
-        setTimeout(() => {isMessageNotOpen = true}, 2500);
     }
 })
 
-document.getElementById('goods-visible').addEventListener('scrollend', () => {
-    loadProducts();
+document.getElementById('goods-visible').addEventListener('scroll', (event) => {
+    if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) { // If you have reached the end of the list of products
+        loadProducts();
+    }
 })
+
+
+/**
+ * @async
+ * This function pulls out a json object with products
+ */
 
 async function getProducts() {
     await axios.get('https://fakestoreapi.com/products/')
@@ -70,6 +88,28 @@ async function getProducts() {
     loadProducts();
 }
 
+/**
+ * This function displays the quantity of unique products on the sidebar-box
+ */
+function updateProductsCount() {
+    document.getElementById('products-count').style.display = 'initial'; // Display the quantity of products on the sidebar-box button
+    document.getElementById('products-count').innerText = `${cart.ids.length}`; // Change the quantity of products on the sidebar-box button
+    // If the cart is empty
+    if (cart.ids.length === 0) {
+        document.getElementById('products-count').style.display = ''; // Stop displaying the quantity of products on the sidebar-box button
+    }
+}
+
+/**
+ * This function returns the product object by the entered id
+ *
+ * @param {uint} id - Product id
+ * @return {product} The product object
+ * @return {uint} -1 if product id does not exist.
+ *
+ * @example
+ *     getProductById(0)
+ */
 function getProductById(id) {
     for (let i = 0; i < products.length; i++) {
         if (products[i].id === id) {
@@ -79,79 +119,95 @@ function getProductById(id) {
     return -1;
 }
 
-function updateCartPrice() {
+/**
+ * This function updates the order price
+ * @param {int} amount The amount that is added or subtracted from the order price
+ */
+function updateCartPrice(amount) {
+    cart.orderPrice += amount;
     cart.orderPrice = Math.round(cart.orderPrice * 100) / 100;
     document.getElementById('order-price').innerText = `${cart.orderPrice}$`;
 }
 
+/**
+ * This function adds an item to the cart
+ * @param {product} productObj Added product
+ */
 function buy(productObj) {
     addToCart(productObj);
     cart.ids.push(productObj.id);
     productObj.cartAmount = 1;
-    document.getElementById('products-count').innerText = `${cart.ids.length}`;
     document.getElementById(`buy-container${productObj.id}`).style.display = 'none';
     document.getElementById(`product-amount${productObj.id}`).innerText = '1pc.';
     document.getElementById(`product-amount-container${productObj.id}`).style.display = '';
+    updateProductsCount();
 }
 
+/**
+ * This function removes an item from the cart
+ * @param {product} cartProduct Product in the cart
+ */
 function delProduct(cartProduct) {
-    document.getElementById(`cart-good${cartProduct.id}`).remove();
-    document.getElementById(`product-amount-container${cartProduct.id}`).style.display = 'none';
-    document.getElementById(`buy-container${cartProduct.id}`).style.display = '';
-    cart.ids.splice(cart.ids.indexOf(cartProduct.id), 1);
-    document.getElementById('products-count').innerText = `${cart.ids.length}`;
-    if (cart.ids.length === 0) {
-        document.getElementById('products-count').style.display = '';
+    document.getElementById(`cart-good${cartProduct.id}`).remove(); // Removing an HTML product element from the cart
+    document.getElementById(`product-amount-container${cartProduct.id}`).style.display = 'none'; // Stop displaying the quantity of the product
+    document.getElementById(`buy-container${cartProduct.id}`).style.display = ''; // Display the product purchase button
+    cart.ids.splice(cart.ids.indexOf(cartProduct.id), 1); // Remove the product id from the cart
+    updateProductsCount();
+    updateCartPrice(-cartProduct.price * cartProduct.cartAmount);
+}
+
+/**
+ * This function decreases/increases the quantity of a specific product
+ * @param {product} productObj Product object
+ * @param {boolean} isIncreased Increase if true, otherwise decrease
+ */
+function changeCountProduct(productObj, isIncreased) {
+    productObj.cartAmount += 2 * isIncreased - 1; // Decrease/increase the quantity of ordered goods
+    document.getElementById(`amount-price${productObj.id}`).innerText = `${productObj.cartAmount}pc. x ${productObj.price}$`; // (quantity X price) is indicated in the cart
+    document.getElementById(`total-price${productObj.id}`).innerText = `= ${Math.round(productObj.cartAmount * productObj.price * 100) / 100}$`; // The total price for the entire quantity of a particular product is indicated in the cart
+    document.getElementById(`cart-amount${productObj.id}`).innerText = `${productObj.cartAmount}pc.`; // How many specific items are ordered in the cart
+    document.getElementById(`product-amount${productObj.id}`).innerText = `${productObj.cartAmount}pc.`; // How many specific items are ordered in the list of products
+    // If 0 specific items are ordered
+    if (productObj.cartAmount === 0) {
+        delProduct(productObj);
     }
-    cart.orderPrice -= cartProduct.price * cartProduct.cartAmount;
-    updateCartPrice();
+
+    updateCartPrice(productObj.price * (2 * isIncreased - 1))
 }
 
-function decProduct(cartProduct) {
-    cartProduct.cartAmount--;
-    document.getElementById(`amount-price${cartProduct.id}`).innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}$`;
-    document.getElementById(`total-price${cartProduct.id}`).innerText = `= ${cartProduct.cartAmount * cartProduct.price}$`;
-    document.getElementById(`cart-amount${cartProduct.id}`).innerText = `${cartProduct.cartAmount}pc.`;
-    document.getElementById(`product-amount${cartProduct.id}`).innerText = `${cartProduct.cartAmount}pc.`;
-    if (cartProduct.cartAmount === 0) {
-        delProduct(cartProduct);
-    }
-    cart.orderPrice -= cartProduct.price;
-    updateCartPrice();
-}
-
-function incProduct(cartProduct) {
-    cartProduct.cartAmount++;
-    document.getElementById(`product-amount${cartProduct.id}`).innerText = `${cartProduct.cartAmount}pc.`;
-    document.getElementById(`amount-price${cartProduct.id}`).innerText = `${cartProduct.cartAmount}pc. x ${cartProduct.price}$`;
-    document.getElementById(`total-price${cartProduct.id}`).innerText = `= ${Math.round(cartProduct.cartAmount * cartProduct.price * 100) / 100}$`;
-    document.getElementById(`cart-amount${cartProduct.id}`).innerText = `${cartProduct.cartAmount}pc.`;
-    cart.orderPrice += cartProduct.price;
-    updateCartPrice()
-}
-
+/**
+ * This function loads products into the list of products
+ */
 function loadProducts() {
+    // Display additional 3 products
     const productsShowed = document.getElementById('goods').children.length;
     for(let i = productsShowed; i < productsShowed + 3; i++) {
         displayProduct(products[i]);
     }
 
+    // If the scrollbar didn't appear
     if (document.getElementById('goods-visible').clientHeight === document.getElementById('goods-visible').scrollHeight) {
         loadProducts();
     }
 }
 
+/**
+ * This function adds a product to the cart
+ * @param {product} productObj Product object
+ */
 function addToCart(productObj) {
+    // If there is no such product in the cart
     if (!cart.ids.includes(productObj.id)) {
-        cart.orderPrice += productObj.price;
-        updateCartPrice();
-        document.getElementById('products-count').innerText = `${cart.ids.length}`;
-        document.getElementById('products-count').style.display = 'initial';
-
+        updateCartPrice(productObj.price);
+        updateProductsCount();
         displayCartProduct(productObj);
     }
 }
 
+/**
+ * This function displays the product in the product list
+ * @param {product} productObj Product object
+ */
 function displayProduct(productObj) {
     const product = document.createElement('div');
     const productImg = document.createElement('div');
@@ -170,7 +226,7 @@ function displayProduct(productObj) {
     const increaseProduct = document.createElement('button');
 
     product.classList.add('product');
-    product.id = productObj.id;
+    product.id = `${productObj.id}`;
 
     productImg.classList.add('product-img');
     productImg.style.backgroundImage = `url("${productObj.image}")`;
@@ -183,6 +239,7 @@ function displayProduct(productObj) {
     starsGray.height = 30;
     starsGray.alt = '';
 
+    // Calculate the size of the transparency mask for golden stars
     starsGold.classList.add('rate-mask');
     starsGold.style.maskSize = `calc(129px * ${productObj.rateValue} / 5) 30px`;
     starsGold.style.webkitMaskSize = `calc(129px * ${productObj.rateValue} / 5) 30px`;
@@ -197,7 +254,7 @@ function displayProduct(productObj) {
     productTitle.classList.add('text-wrapper');
     productTitle.innerText = productObj.title;
 
-    productDescription.innerText = productObj.description;
+    productDescription.innerText = `${productObj.description}`;
     productDescription.classList.add('product-description');
     productDescription.classList.add('text-wrapper');
 
@@ -228,11 +285,11 @@ function displayProduct(productObj) {
     });
 
     decreaseProduct.addEventListener('click', () => {
-        decProduct(productObj);
+        changeCountProduct(productObj, false);
     });
 
     increaseProduct.addEventListener('click', () => {
-        incProduct(productObj);
+        changeCountProduct(productObj, true);
     })
 
     amountContainer.appendChild(decreaseProduct);
@@ -256,6 +313,10 @@ function displayProduct(productObj) {
     document.getElementById('goods').appendChild(product);
 }
 
+/**
+ * This function displays the product in the cart
+ * @param {product} productObj Product object
+ */
 function displayCartProduct(productObj) {
     const product = document.createElement('div');
     const deleteProduct = document.createElement('div');
@@ -287,7 +348,7 @@ function displayCartProduct(productObj) {
     productDescription.classList.add('product-description');
     productDescription.classList.add('text-wrapper');
 
-    productDescriptionLink.innerText = productObj.description;
+    productDescriptionLink.innerText = `${productObj.description}`;
     productDescriptionLink.href = `#${productObj.id}`;
 
     productPrice.classList.add('product-price');
@@ -314,10 +375,10 @@ function displayCartProduct(productObj) {
         delProduct(productObj);
     });
     decreaseProduct.addEventListener('click', () => {
-        decProduct(productObj);
+        changeCountProduct(productObj, false);
     });
     increaseProduct.addEventListener('click', () => {
-        incProduct(productObj);
+        changeCountProduct(productObj, true);
     });
 
     productDescription.appendChild(productDescriptionLink);
@@ -337,34 +398,5 @@ function displayCartProduct(productObj) {
     product.appendChild(amountContainer);
 
     document.getElementById('cart-goods').appendChild(product);
-    document.getElementById('products-count').innerText = `${cart.ids.length}`;
-    document.getElementById('products-count').style.display = 'initial';
+    updateProductsCount();
 }
-//         <div class="product-img" style="background-image: url('${products[id].image}')"></div>
-//         <div class="product-title text-wrapper">
-//             <a href="#${id}" style="text-decoration: none; color: black;">
-//                 ${products[id].title}
-//             </a>
-//         </div>
-//         <div class="product-description text-wrapper">
-//             <a href="#${id}">
-//                 ${products[id].description}
-//             </a>
-//         </div>
-//         <div class="product-price">
-//             <div id="ap${id}">
-//                 1pc. x ${products[id].price}$
-//             </div>
-//             <div id="tp${id}">
-//                 = ${products[id].price}$
-//             </div>
-//         </div>
-//         <div class="amount-container">
-//             <button class="change-count-product" style="background-image: url('/images/minus.webp');" onclick="decProduct(${id})"></button>
-//             <div class="amount" id="cart-amount${id}">
-//                 1pc.
-//             </div>
-//             <button class="change-count-product" style="background-image: url('/images/plus.webp');" onclick="incProduct(${id})"></button>
-//         </div>
-//     </div>
-// `;
