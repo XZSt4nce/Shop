@@ -193,7 +193,7 @@ nav {
     width: 20px;
     height: 20px;
     text-align: right;
-    background: red url("/images/cross.png") no-repeat center;
+    background: red url("/images/cross.webp") no-repeat center;
     background-size: contain;
     justify-self: end;
     border-radius: 25px;
@@ -203,12 +203,12 @@ nav {
 }
 
 .delete-product:hover {
-    background: #DD0000 url("/images/cross.png") no-repeat center;
+    background: #DD0000 url("/images/cross.webp") no-repeat center;
     background-size: contain;
 }
 
 .delete-product:active {
-    background: #BB0000 url("/images/cross.png") no-repeat center;
+    background: #BB0000 url("/images/cross.webp") no-repeat center;
     background-size: contain;
 }
 
@@ -284,6 +284,8 @@ nav {
 }
 
 .rate img {
+    width: 100%;
+    max-width: 129px;
     position: absolute;
 }
 
@@ -306,7 +308,6 @@ nav {
     padding: 10px;
     position: absolute;
     font-weight: bold;
-    opacity: 70%;
     top: -100px;
     margin-left: auto;
     margin-right: auto;
@@ -315,4 +316,5 @@ nav {
     text-align: center;
     border-radius: 25px;
     transition: top 0.5s;
+    z-index: 100;
 }

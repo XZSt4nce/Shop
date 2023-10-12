@@ -24,12 +24,15 @@ document.getElementById('order').addEventListener('click', () => {
     const message = document.getElementById('message');
     if (isMessageNotOpen) {
         isMessageNotOpen = false;
-        const backIds = cart.filter(id => id);
-        console.log(backIds)
         if (cart.ids.length === 0) {
             message.style.background = 'red';
             message.innerText = 'The order is empty!';
         } else {
+            const cartProducts = [];
+            for (let i = 0; i < cart.ids.length; i++) {
+                cartProducts.push(getProductById(cart.ids[i]));
+            }
+            console.log(cartProducts);
             message.style.background = 'springgreen';
             message.innerText = 'The order has been placed. Thank you for your purchase!';
         }
@@ -67,6 +70,15 @@ async function getProducts() {
     loadProducts();
 }
 
+function getProductById(id) {
+    for (let i = 0; i < products.length; i++) {
+        if (products[i].id === id) {
+            return products[i];
+        }
+    }
+    return -1;
+}
+
 function updateCartPrice() {
     cart.orderPrice = Math.round(cart.orderPrice * 100) / 100;
     document.getElementById('order-price').innerText = `${cart.orderPrice}$`;
@@ -82,15 +94,17 @@ function buy(productObj) {
     document.getElementById(`product-amount-container${productObj.id}`).style.display = '';
 }
 
-function delProduct(id) {
-    document.getElementById(`cart-good${id}`).remove();
-    document.getElementById(`product-amount-container${id}`).style.display = 'none';
-    document.getElementById(`buy-container${id}`).style.display = '';
-    cart.ids.splice(cart.ids.indexOf(id), 1);
+function delProduct(cartProduct) {
+    document.getElementById(`cart-good${cartProduct.id}`).remove();
+    document.getElementById(`product-amount-container${cartProduct.id}`).style.display = 'none';
+    document.getElementById(`buy-container${cartProduct.id}`).style.display = '';
+    cart.ids.splice(cart.ids.indexOf(cartProduct.id), 1);
     document.getElementById('products-count').innerText = `${cart.ids.length}`;
     if (cart.ids.length === 0) {
         document.getElementById('products-count').style.display = '';
     }
+    cart.orderPrice -= cartProduct.price * cartProduct.cartAmount;
+    updateCartPrice();
 }
 
 function decProduct(cartProduct) {
@@ -100,7 +114,7 @@ function decProduct(cartProduct) {
     document.getElementById(`cart-amount${cartProduct.id}`).innerText = `${cartProduct.cartAmount}pc.`;
     document.getElementById(`product-amount${cartProduct.id}`).innerText = `${cartProduct.cartAmount}pc.`;
     if (cartProduct.cartAmount === 0) {
-        delProduct(cartProduct.id);
+        delProduct(cartProduct);
     }
     cart.orderPrice -= cartProduct.price;
     updateCartPrice();
@@ -165,14 +179,14 @@ function displayProduct(productObj) {
 
     rate.classList.add('rate');
 
-    starsGray.src = 'images/stars_gray.png';
+    starsGray.src = 'images/stars_gray.webp';
     starsGray.height = 30;
     starsGray.alt = '';
 
     starsGold.classList.add('rate-mask');
     starsGold.style.maskSize = `calc(129px * ${productObj.rateValue} / 5) 30px`;
     starsGold.style.webkitMaskSize = `calc(129px * ${productObj.rateValue} / 5) 30px`;
-    starsGold.src = 'images/stars_gold.png'
+    starsGold.src = 'images/stars_gold.webp'
     starsGold.height = 30;
     starsGold.alt = '';
 
@@ -200,13 +214,13 @@ function displayProduct(productObj) {
     amountContainer.style.display = 'none';
 
     decreaseProduct.classList.add('change-count-product');
-    decreaseProduct.style.backgroundImage = "url('/images/minus.png')";
+    decreaseProduct.style.backgroundImage = "url('/images/minus.webp')";
 
     amount.classList.add('amount');
     amount.id = `product-amount${productObj.id}`;
 
     increaseProduct.classList.add('change-count-product');
-    increaseProduct.style.backgroundImage = "url('/images/plus.png')";
+    increaseProduct.style.backgroundImage = "url('/images/plus.webp')";
 
 
     buyContainer.addEventListener('click', () => {
@@ -287,23 +301,23 @@ function displayCartProduct(productObj) {
     amountContainer.classList.add('amount-container');
 
     decreaseProduct.classList.add('change-count-product');
-    decreaseProduct.style.backgroundImage = "url('/images/minus.png')";
+    decreaseProduct.style.backgroundImage = "url('/images/minus.webp')";
 
     amount.classList.add('amount');
     amount.id = `cart-amount${productObj.id}`;
     amount.innerText = '1pc.';
 
     increaseProduct.classList.add('change-count-product');
-    increaseProduct.style.backgroundImage = "url('/images/plus.png')";
+    increaseProduct.style.backgroundImage = "url('/images/plus.webp')";
 
     deleteProduct.addEventListener('click', () => {
-        delProduct(productObj.id);
+        delProduct(productObj);
     });
     decreaseProduct.addEventListener('click', () => {
-        decProduct(productObj.id);
+        decProduct(productObj);
     });
     increaseProduct.addEventListener('click', () => {
-        incProduct(productObj.id);
+        incProduct(productObj);
     });
 
     productDescription.appendChild(productDescriptionLink);
@@ -346,11 +360,11 @@ function displayCartProduct(productObj) {
 //             </div>
 //         </div>
 //         <div class="amount-container">
-//             <button class="change-count-product" style="background-image: url('/images/minus.png');" onclick="decProduct(${id})"></button>
+//             <button class="change-count-product" style="background-image: url('/images/minus.webp');" onclick="decProduct(${id})"></button>
 //             <div class="amount" id="cart-amount${id}">
 //                 1pc.
 //             </div>
-//             <button class="change-count-product" style="background-image: url('/images/plus.png');" onclick="incProduct(${id})"></button>
+//             <button class="change-count-product" style="background-image: url('/images/plus.webp');" onclick="incProduct(${id})"></button>
 //         </div>
 //     </div>
 // `;
