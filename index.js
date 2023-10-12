@@ -214,7 +214,7 @@ function changeCountProduct(productObj, isIncreased) {
  * This function loads products into the list of products
  */
 function loadProducts() {
-    // Display additional 3 products
+    // Display additional 9 products
     const productsShowed = document.getElementById('goods').children.length;
     for(let i = productsShowed; i < productsShowed + 9; i++) {
         try{
