@@ -216,7 +216,7 @@ function changeCountProduct(productObj, isIncreased) {
 function loadProducts() {
     // Display additional 3 products
     const productsShowed = document.getElementById('goods').children.length;
-    for(let i = productsShowed; i < productsShowed + 3; i++) {
+    for(let i = productsShowed; i < productsShowed + 9; i++) {
         try{
             displayProduct(products[i]);
         }
