@@ -50,7 +50,7 @@ document.getElementById('order').addEventListener('click', () => {
             // Output of ordered goods to the console
             const cartProducts = [];
             for (let i = 0; i < cart.ids.length; i++) {
-                cartProducts.push(getProductById(cart.ids[i]));
+                cartProducts.push(products.find(el => el.id === cart.ids[i]));
             }
             console.log(cartProducts);
 
@@ -82,14 +82,15 @@ async function getProducts() {
     await axios.get('https://fakestoreapi.com/products/')
         .then(function (response) {
             response.data.forEach(productObj => {
+                console.log(productObj)
                 products.push({
-                    id: productObj['id'],
-                    image: productObj['image'],
-                    title: productObj['title'],
-                    description: productObj['description'],
-                    price: productObj['price'],
-                    rateValue: productObj['rating']['rate'],
-                    rateCount: productObj['rating']['count'],
+                    id: productObj.id,
+                    image: productObj.image,
+                    title: productObj.title,
+                    description: productObj.description,
+                    price: productObj.price,
+                    rateValue: productObj.rating.rate,
+                    rateCount: productObj.rating.count,
                     cartAmount: 0
                 });
             })
@@ -115,25 +116,6 @@ function updateProductsCount() {
         // Stop displaying the quantity of products on the sidebar-box button
         document.getElementById('products-count').style.display = '';
     }
-}
-
-/**
- * This function returns the product object by the entered id
- *
- * @param {uint} id - Product id
- * @return {product} The product object
- * @return {uint} -1 if product id does not exist.
- *
- * @example
- *     getProductById(0)
- */
-function getProductById(id) {
-    for (let i = 0; i < products.length; i++) {
-        if (products[i].id === id) {
-            return products[i];
-        }
-    }
-    return -1;
 }
 
 /**
