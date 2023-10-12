@@ -82,6 +82,7 @@ async function getProducts() {
     await axios.get('https://fakestoreapi.com/products/')
         .then(function (response) {
             response.data.forEach(productObj => {
+                console.log(productObj)
                 products.push({
                     id: productObj.id,
                     image: productObj.image,
