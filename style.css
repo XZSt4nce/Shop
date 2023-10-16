@@ -5,14 +5,9 @@
     user-select: none;
 }
 
-body {
+.wrapper {
     width: 100vw;
     height: 100vh;
-}
-
-.wrapper {
-    width: 100%;
-    height: 100%;
     background: rgb(145,33,255);
     background: linear-gradient(120deg, rgba(145,33,255,1) 0%, rgba(190,57,255,1) 65%);
 }
@@ -35,13 +30,13 @@ nav {
 #sidebar {
     width: 100%;
     max-width: 240px;
-    height: 100vh;
+    height: 100%;
     padding: 0 20px;
     background: #9932CC;
     display: flex;
-    border-radius: 0 25px 25px 0;
     flex-direction: column;
-    align-items: center;
+    border-radius: 0 25px 25px 0;
+    /*align-items: center;*/
     position: absolute;
     transition: 0.5s;
     z-index: 2;
@@ -280,7 +275,7 @@ nav {
 }
 
 .change-count-product {
-    width: 10px;
+    width: 20px;
     height: 100%;
     border: none;
     background-color: transparent;

@@ -246,20 +246,6 @@ function displayProduct(productObj, isCart) {
             delProduct(productObj);
         });
 
-        product.appendChild(deleteProduct);
-    } else {
-        product.id = `${productObj.id}`;
-        amount.id = `product-amount${productObj.id}`;
-        amountContainer.id = `product-amount-container${productObj.id}`;
-        amountContainer.style.display = 'none';
-    }
-
-    product.appendChild(productImg);
-    product.appendChild(rating);
-    product.appendChild(rateCount);
-    product.appendChild(productTitle);
-
-    if (isCart) {
         const productDescriptionLink = document.createElement('a');
         productDescriptionLink.innerText = `${productObj.description}`;
         productDescriptionLink.href = `#${productObj.id}`;
@@ -282,9 +268,22 @@ function displayProduct(productObj, isCart) {
         productPrice.appendChild(amountPrice);
         productPrice.appendChild(totalPrice);
 
+        product.appendChild(deleteProduct);
+        product.appendChild(productImg);
+        product.appendChild(rating);
+        product.appendChild(rateCount);
+        product.appendChild(productTitle);
         product.appendChild(productDescription);
         product.appendChild(productPrice);
+        product.appendChild(amountContainer);
+
+        document.getElementById('cart-goods').appendChild(product);
     } else {
+        product.id = `${productObj.id}`;
+        amount.id = `product-amount${productObj.id}`;
+        amountContainer.id = `product-amount-container${productObj.id}`;
+        amountContainer.style.display = 'none';
+
         const productDescription = document.createElement('p');
         productDescription.classList.add('product-description');
         productDescription.classList.add('text-wrapper');
@@ -303,17 +302,15 @@ function displayProduct(productObj, isCart) {
             addToCart(productObj);
         });
 
+        product.appendChild(productImg);
+        product.appendChild(rating);
+        product.appendChild(rateCount);
+        product.appendChild(productTitle);
         product.appendChild(productDescription);
         product.appendChild(productPrice);
         product.appendChild(buyButton);
-    }
+        product.appendChild(amountContainer);
 
-    product.appendChild(amountContainer);
-
-    if (isCart) {
-        document.getElementById('cart-goods').appendChild(product);
-    }
-    else {
         document.getElementById('goods').appendChild(product);
     }
 }
