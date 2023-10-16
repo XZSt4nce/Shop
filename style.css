@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     font-family: 'Arial', sans-serif;
+    user-select: none;
 }
 
 body {
@@ -24,11 +25,11 @@ body {
 nav {
     position: absolute;
     right: 10px;
-    top: 10px;
+    top: 5px;
     display: flex;
     flex-direction: row;
     justify-content: end;
-    z-index: 100;
+    z-index: 99;
 }
 
 #sidebar {
@@ -43,7 +44,7 @@ nav {
     align-items: center;
     position: absolute;
     transition: 0.5s;
-    z-index: 1;
+    z-index: 2;
     opacity: 90%;
 }
 
@@ -88,10 +89,6 @@ nav {
     border-radius: 25px;
     font-size: 25px;
     text-align: center;
-    flex-direction: column;
-    justify-content: center;
-    display: flex;
-    align-items: center;
     background: white;
     margin-top: 20px;
     margin-bottom: 20px;
@@ -111,15 +108,25 @@ nav {
 #goods-visible {
     width: 100%;
     background: purple;
-    padding: 10px;
+    box-sizing: border-box;
+    padding: 20px;
     border-radius: 25px 10px 10px 25px;
     margin-top: 100px;
+    position: relative;
+}
+
+#cart-header-container {
+    position: sticky;
+    top: -20px;
+    background: purple;
+    justify-content: center;
+    width: 100%;
+    z-index: 1;
 }
 
 #goods {
     width: 100%;
     border-radius: 25px;
-    scroll-behavior: smooth;
     display: grid;
     grid-template-columns: repeat(3, minmax(200px, 1fr));
     grid-gap: 10px;
@@ -131,7 +138,9 @@ nav {
     display: flex;
     flex-direction: column;
     overflow: auto;
+    scroll-behavior: smooth;
     margin-bottom: 20px;
+    gap: 10px
 }
 
 #cart-goods::-webkit-scrollbar, #goods-visible::-webkit-scrollbar {
@@ -161,13 +170,14 @@ nav {
     padding-bottom: 5px;
     border-radius: 25px;
     text-align: center;
+    user-select: text;
 }
 
-#order, .buy-container {
+#order, .buy-button {
     width: 100%;
     font-weight: bold;
     font-size: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     padding-top: 5px;
     padding-bottom: 5px;
     background: radial-gradient(rgba(10,173,141,1) 15%, rgba(20,232,112,1) 100%);
@@ -178,23 +188,22 @@ nav {
     transition: 0.5s;
 }
 
-#order:hover, .buy-container:hover {
+#order:hover, .buy-button:hover {
     scale: 0.95;
 }
 
-#order:active, .buy-container:active {
+#order:active, .buy-button:active {
     scale: 0.9;
 }
 
 .product {
-    /*width: 100%;*/
+    width: 100%;
     display: flex;
     flex-direction: column;
     background: white;
     box-sizing: border-box;
     padding: 10px;
     border-radius: 25px;
-    margin-bottom: 10px;
 }
 
 .delete-product {
@@ -234,11 +243,13 @@ nav {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 5px;
+    user-select: text;
 }
 
 .product-description {
     width: 100%;
     margin-bottom: 5px;
+    user-select: text;
 }
 
 .text-wrapper {
@@ -254,8 +265,9 @@ nav {
     flex-direction: column;
     align-items: end;
     font-size: 13px;
-    margin-top: 20px;
+    margin-top: auto;
     margin-bottom: 5px;
+    user-select: text;
 }
 
 .amount-container {
@@ -264,6 +276,7 @@ nav {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-bottom: 10px;
 }
 
 .change-count-product {
@@ -298,8 +311,8 @@ nav {
 }
 
 .rate img {
-    width: 100%;
-    max-width: 129px;
+    width: 129px;
+    height: 30px;
     position: absolute;
 }
 
@@ -310,6 +323,7 @@ nav {
 
     mask-image: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 1));
     mask-repeat: no-repeat;
+    z-index: 0;
 }
 
 .rate-count {
@@ -319,7 +333,7 @@ nav {
 
 #message {
     width: 100%;
-    max-width: 280px;
+    max-width: 240px;
     padding: 10px;
     position: absolute;
     font-weight: bold;
@@ -334,14 +348,54 @@ nav {
     z-index: 100;
 }
 
-@media screen and (max-width: 1100px) {
+@media (max-width: 1100px) {
     #goods {
         grid-template-columns: repeat(2, minmax(200px, 1fr));
     }
 }
 
-@media screen and (max-width: 800px) {
+@media (max-width: 800px) {
     #goods {
         grid-template-columns: minmax(200px, 1fr);
+    }
+}
+
+@media (max-width: 330px) {
+    .header {
+        width: calc(85vw - 50px);
+        align-self: start;
+    }
+
+    #sidebar-box {
+        opacity: 100%;
+    }
+
+    #sidebar {
+        opacity: 100%;
+    }
+
+    #goods-container {
+        width: 100%;
+    }
+
+    #goods-visible {
+        margin: 0;
+        border-radius: 0;
+    }
+
+    #goods-visible::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    #goods-visible::-webkit-scrollbar-thumb {
+        border-radius: 0;
+    }
+
+    #goods-visible::-webkit-scrollbar-track {
+        border-radius: 0;
+    }
+
+    #goods.header {
+        margin-top: 0;
     }
 }
