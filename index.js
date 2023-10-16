@@ -69,7 +69,7 @@ document.getElementById('order').addEventListener('click', () => {
 
 document.getElementById('goods-visible').addEventListener('scroll', (event) => {
     // If you have reached the end of the list of products
-    if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
+    if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight - 0.5) {
         loadProducts();
     }
 })
