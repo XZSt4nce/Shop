@@ -51,7 +51,7 @@ document.getElementById('message').addEventListener('click', (event) => {
     event.target.style.top = '-100px';
 })
 
-document.getElementById('goods-visible').addEventListener('scroll', (event) => {
+document.getElementById('goods').addEventListener('scroll', (event) => {
     // If you have reached the end of the list of products
     if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight - 0.5) {
         loadProducts();
@@ -131,7 +131,7 @@ function loadProducts() {
     productsShowed += 9;
 
     // If the scrollbar didn't appear
-    if (document.getElementById('goods-visible').clientHeight === document.getElementById('goods-visible').scrollHeight) {
+    if (document.getElementById('goods').clientHeight === document.getElementById('goods').scrollHeight) {
         loadProducts();
     }
 }

@@ -15,12 +15,18 @@
 .container {
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 nav {
-    position: absolute;
-    right: 10px;
-    top: 5px;
+    width: 100%;
+    height: 78px;
+    box-sizing: border-box;
+    padding: 10px;
+    background: rebeccapurple;
+    display: flex;
+    justify-content: end;
     z-index: 99;
 }
 
@@ -79,70 +85,67 @@ nav {
     font-size: 25px;
     text-align: center;
     background: white;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     font-weight: bold;
 }
 
 #goods-container {
     width: 90%;
-    height: 100%;
+    height: calc(100vh - 110px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background: purple;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    border-radius: 25px 10px 10px 25px;
     margin: auto;
 }
 
-#goods-visible {
-    width: 100%;
-    background: purple;
-    box-sizing: border-box;
-    padding: 20px;
-    border-radius: 25px 10px 10px 25px;
-    margin-top: 100px;
-    margin-bottom: 20px;
-}
-
 #cart-header-container {
-    position: sticky;
-    top: -20px;
-    background: purple;
     width: 100%;
+    position: sticky;
+    top: 0;
+    background: purple;
     z-index: 1;
 }
 
 #goods {
-    width: 100%;
+    height: 100%;
     border-radius: 25px;
     display: grid;
     grid-template-columns: repeat(3, minmax(200px, 1fr));
     grid-gap: 10px;
 }
 
-#cart-goods, #goods-visible {
+#cart-goods, #goods {
     width: 100%;
     align-items: center;
-    display: flex;
-    flex-direction: column;
     margin-bottom: 20px;
     overflow: auto;
     scroll-behavior: smooth;
     gap: 10px
 }
 
-#cart-goods::-webkit-scrollbar, #goods-visible::-webkit-scrollbar {
+#cart-goods {
+    display: flex;
+    flex-direction: column;
+}
+
+#cart-goods::-webkit-scrollbar, #goods::-webkit-scrollbar {
     width: 15px;
 }
 
-#cart-goods::-webkit-scrollbar-thumb, #goods-visible::-webkit-scrollbar-thumb {
+#cart-goods::-webkit-scrollbar-thumb, #goods::-webkit-scrollbar-thumb {
     background: purple;
     background-clip: padding-box;
     border: 3px solid rgba(0, 0, 0, 0);
     border-radius: 0 10px 10px 0;
 }
 
-#cart-goods::-webkit-scrollbar-track, #goods-visible::-webkit-scrollbar-track {
+#cart-goods::-webkit-scrollbar-track, #goods::-webkit-scrollbar-track {
     background: lightgray;
     border-radius: 0 10px 10px 0;
 }
@@ -339,9 +342,19 @@ nav {
 }
 
 @media (max-width: 330px) {
+    #sidebar .header {
+        margin-top: 20px;
+    }
+
     .header {
         width: calc(85vw - 50px);
         align-self: start;
+        margin-bottom: 30px;
+    }
+
+    nav {
+        background: transparent;
+        position: absolute;
     }
 
     #sidebar-box {
@@ -356,24 +369,21 @@ nav {
         width: 100%;
     }
 
-    #goods-visible {
+    #goods-container {
+        height: 100%;
         margin: 0;
         border-radius: 0;
     }
 
-    #goods-visible::-webkit-scrollbar {
+    #goods::-webkit-scrollbar {
         width: 10px;
     }
 
-    #goods-visible::-webkit-scrollbar-thumb {
+    #goods::-webkit-scrollbar-thumb {
         border-radius: 0;
     }
 
-    #goods-visible::-webkit-scrollbar-track {
+    #goods::-webkit-scrollbar-track {
         border-radius: 0;
-    }
-
-    #goods.header {
-        margin-top: 0;
     }
 }
