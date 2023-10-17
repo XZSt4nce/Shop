@@ -97,7 +97,7 @@ function updateProductsCount() {
 
 function updateCartPrice(amount) {
     cart.orderPrice += amount;
-    cart.orderPrice = Math.round(cart.orderPrice * 100) / 100;
+    cart.orderPrice = cart.orderPrice.toFixed(2);
     document.getElementById('order-price').innerText = `${cart.orderPrice}$`;
 }
 
@@ -126,7 +126,7 @@ function changeCountProduct(productObj, isIncreased) {
     document.getElementById(`amount-price${productObj.id}`).innerText = `${productObj.cartAmount}pc. x ${productObj.price}$`;
 
     // The total price for the entire quantity of a particular product is indicated in the cart
-    document.getElementById(`total-price${productObj.id}`).innerText = `= ${Math.round(productObj.cartAmount * productObj.price * 100) / 100}$`;
+    document.getElementById(`total-price${productObj.id}`).innerText = `= ${(productObj.cartAmount * productObj.price).toFixed(2)}$`;
 
     // How many specific items are ordered in the cart
     document.getElementById(`cart-amount${productObj.id}`).innerText = `${productObj.cartAmount}pc.`;
