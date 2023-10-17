@@ -82,36 +82,23 @@ async function getProducts() {
 getProducts()
 
 function updateProductsCount() {
-    // Display the quantity of products on the sidebar-box button
     document.getElementById('products-count').style.display = 'initial';
-
-    // Change the quantity of products on the sidebar-box button
     document.getElementById('products-count').innerText = `${cart.ids.length}`;
-
-    // If the cart is empty
     if (cart.ids.length === 0) {
-        // Stop displaying the quantity of products on the sidebar-box button
         document.getElementById('products-count').style.display = '';
     }
 }
 
 function updateCartPrice(amount) {
     cart.orderPrice += amount;
-    cart.orderPrice = cart.orderPrice.toFixed(2);
+    cart.orderPrice = Number(parseFloat(cart.orderPrice).toFixed(2));
     document.getElementById('order-price').innerText = `${cart.orderPrice}$`;
 }
 
 function delProduct(cartProduct) {
-    // Removing an HTML product element from the cart
     document.getElementById(`cart-good${cartProduct.id}`).remove();
-
-    // Stop displaying the quantity of the product
     document.getElementById(`product-amount-container${cartProduct.id}`).style.display = 'none';
-
-    // Display the product purchase button
     document.getElementById(`buy-button${cartProduct.id}`).style.display = '';
-
-    // Remove the product id from the cart
     cart.ids.splice(cart.ids.indexOf(cartProduct.id), 1);
 
     updateProductsCount();
@@ -122,23 +109,14 @@ function changeCountProduct(productObj, isIncreased) {
     // Decrease/increase the quantity of ordered goods
     productObj.cartAmount += 2 * isIncreased - 1;
 
-    // (quantity X price) is indicated in the cart
     document.getElementById(`amount-price${productObj.id}`).innerText = `${productObj.cartAmount}pc. x ${productObj.price}$`;
-
-    // The total price for the entire quantity of a particular product is indicated in the cart
     document.getElementById(`total-price${productObj.id}`).innerText = `= ${(productObj.cartAmount * productObj.price).toFixed(2)}$`;
-
-    // How many specific items are ordered in the cart
     document.getElementById(`cart-amount${productObj.id}`).innerText = `${productObj.cartAmount}pc.`;
-
-    // How many specific items are ordered in the list of products
     document.getElementById(`product-amount${productObj.id}`).innerText = `${productObj.cartAmount}pc.`;
 
-    // If 0 specific items are ordered
     if (productObj.cartAmount === 0) {
         delProduct(productObj);
     }
-
     updateCartPrice(productObj.price * (2 * isIncreased - 1))
 }
 
@@ -158,11 +136,8 @@ function loadProducts() {
 
 function addToCart(productObj) {
     const foundProduct = cart.ids.find(id => productObj.id === id);
-
-    // If there is no such product in the cart
     if (!foundProduct) {
         updateCartPrice(productObj.price);
-        updateProductsCount();
         displayProduct(productObj, true);
         cart.ids.push(productObj.id);
         productObj.cartAmount = 1;
@@ -182,17 +157,16 @@ function displayProduct(productObj, isCart) {
     productImg.classList.add('product-img');
     productImg.style.backgroundImage = `url("${productObj.image}")`;
 
-    const starsGray = document.createElement('img');
-    starsGray.src = 'images/stars_gray.webp';
-    starsGray.alt = '';
+    const starsGray = document.createElement('p');
+    starsGray.innerText = '★★★★★';
+    starsGray.style.color = 'darkgray';
 
-    const starsGold = document.createElement('img');
-    // Calculate the size of the transparency mask for golden stars
+    const starsGold = document.createElement('p');
+    const maskSize = productObj.rateValue / 5 * 100;
     starsGold.classList.add('rate-mask');
-    starsGold.style.maskSize = `calc(129px * ${productObj.rateValue} / 5) 30px`;
-    starsGold.style.webkitMaskSize = `calc(129px * ${productObj.rateValue} / 5) 30px`;
-    starsGold.src = 'images/stars_gold.webp'
-    starsGold.alt = '';
+    starsGold.innerText = '★★★★★';
+    starsGold.style.maskSize = `${maskSize}%`;
+    starsGold.style.webkitMaskSize = `${maskSize}%`;
 
     const rate = document.createElement('div');
     rate.classList.add('rate');
@@ -209,13 +183,14 @@ function displayProduct(productObj, isCart) {
     rating.appendChild(rateCount);
 
     const productTitle = document.createElement('p');
-    productTitle.classList.add('product-title');
-    productTitle.classList.add('text-wrapper');
+    productTitle.classList.add('text');
+    productTitle.style.fontSize = '18px';
+    productTitle.style.fontWeight = 'bold';
     productTitle.innerText = productObj.title;
 
     const decreaseProduct = document.createElement('button');
     decreaseProduct.classList.add('change-count-product');
-    decreaseProduct.style.backgroundImage = "url('/images/minus.webp')";
+    decreaseProduct.innerText = "–";
     decreaseProduct.addEventListener('click', () => {
         changeCountProduct(productObj, false);
     });
@@ -225,7 +200,7 @@ function displayProduct(productObj, isCart) {
 
     const increaseProduct = document.createElement('button');
     increaseProduct.classList.add('change-count-product');
-    increaseProduct.style.backgroundImage = "url('/images/plus.webp')";
+    increaseProduct.innerText = "+";
     increaseProduct.addEventListener('click', () => {
         changeCountProduct(productObj, true);
     })
@@ -240,8 +215,9 @@ function displayProduct(productObj, isCart) {
         product.id = `cart-good${productObj.id}`;
         amount.id = `cart-amount${productObj.id}`;
 
-        const deleteProduct = document.createElement('div');
+        const deleteProduct = document.createElement('button');
         deleteProduct.classList.add('delete-product');
+        deleteProduct.innerText = "X";
         deleteProduct.addEventListener('click', () => {
             delProduct(productObj);
         });
@@ -251,8 +227,7 @@ function displayProduct(productObj, isCart) {
         productDescriptionLink.href = `#${productObj.id}`;
 
         const productDescription = document.createElement('div');
-        productDescription.classList.add('product-description');
-        productDescription.classList.add('text-wrapper');
+        productDescription.classList.add('text');
         productDescription.appendChild(productDescriptionLink);
 
         const amountPrice = document.createElement('div');
@@ -285,8 +260,7 @@ function displayProduct(productObj, isCart) {
         amountContainer.style.display = 'none';
 
         const productDescription = document.createElement('p');
-        productDescription.classList.add('product-description');
-        productDescription.classList.add('text-wrapper');
+        productDescription.classList.add('text');
         productDescription.innerText = `${productObj.description}`;
 
         const productPrice = document.createElement('p');
