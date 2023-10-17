@@ -5,13 +5,26 @@ const cart = {
 const products = [];
 let productsShowed = 0;
 
+function showHideSidebar() {
+
+}
+
+window.addEventListener('resize', () => {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar.offsetLeft !== 0) {
+        sidebar.style.transition = 'none';
+        document.getElementById('sidebar').style.left = `-${sidebar.offsetWidth}px`;
+        sidebar.style.transition = '0.5s';
+    }
+});
+
 document.getElementById('sidebar-box').addEventListener("click", () => {
     const sidebar = document.getElementById('sidebar');
     if (sidebar.offsetLeft === 0) {
         // Hide sidebar
         document.getElementById('sidebar').style.left = `-${sidebar.offsetWidth}px`;
     }
-    else if (sidebar.offsetLeft === -sidebar.offsetWidth) {
+    else {
         // Show sidebar
         sidebar.style.left = "0";
     }

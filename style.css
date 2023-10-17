@@ -31,12 +31,13 @@ nav {
 
 #sidebar {
     width: 100%;
-    max-width: 240px;
+    max-width: 280px;
     height: 100%;
     padding: 0 20px;
     background: #9932CC;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
     border-radius: 0 25px 25px 0;
     position: absolute;
     transition: 0.5s;
@@ -123,7 +124,6 @@ nav {
 #cart-goods, #goods {
     width: 100%;
     align-items: center;
-    margin-bottom: 20px;
     overflow: auto;
     scroll-behavior: smooth;
     gap: 10px
@@ -132,6 +132,7 @@ nav {
 #cart-goods {
     display: flex;
     flex-direction: column;
+    margin-bottom: 20px;
 }
 
 #cart-goods::-webkit-scrollbar, #goods::-webkit-scrollbar {
@@ -385,5 +386,35 @@ nav {
 
     #goods::-webkit-scrollbar-track {
         border-radius: 0;
+    }
+}
+
+@media (max-height: 600px) {
+    .container {
+        flex-direction: row-reverse;
+    }
+
+    nav {
+        width: 78px;
+        height: 100%;
+    }
+
+    #sidebar .header {
+        width: calc(100% - 78px);
+        margin-top: 5px;
+    }
+
+    #sidebar {
+        width: 100%;
+        max-width: none;
+        height: 100%;
+    }
+
+    #cart-goods {
+        width: calc(100% - 78px);
+    }
+
+    #goods-container {
+        height: 100%;
     }
 }
