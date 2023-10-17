@@ -5,15 +5,6 @@ const cart = {
 const products = [];
 let productsShowed = 0;
 
-window.addEventListener('resize', () => {
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar.offsetLeft !== 0) {
-        sidebar.style.transition = 'none';
-        document.getElementById('sidebar').style.left = `-${sidebar.offsetWidth}px`;
-        sidebar.style.transition = '0.5s';
-    }
-});
-
 document.getElementById('sidebar-box').addEventListener("click", () => {
     const sidebar = document.getElementById('sidebar');
     if (sidebar.offsetLeft === 0) {
@@ -89,7 +80,7 @@ async function getProducts() {
     loadProducts();
 }
 
-getProducts()
+getProducts();
 
 function updateProductsCount() {
     const productsCount = document.getElementById('products-count');
