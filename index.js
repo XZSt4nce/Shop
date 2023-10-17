@@ -42,7 +42,7 @@ document.getElementById('order').addEventListener('click', () => {
 
         // Hide message after 2 seconds
         setTimeout(() => {
-            message.style.top = '-100px'
+            message.style.top = '-100px';
         }, 2000);
     }
 })
@@ -76,7 +76,7 @@ async function getProducts() {
         })
         .catch(function (error) {
             console.log(error);
-        })
+        });
     loadProducts();
 }
 
@@ -119,7 +119,7 @@ function changeCountProduct(productObj, isIncreased) {
     if (productObj.cartAmount === 0) {
         delProduct(productObj);
     }
-    updateCartPrice(productObj.price * (2 * isIncreased - 1))
+    updateCartPrice(productObj.price * (2 * isIncreased - 1));
 }
 
 function loadProducts() {
@@ -234,7 +234,7 @@ function displayProduct(productObj, isCart) {
 
         const amountPrice = document.createElement('div');
         amountPrice.id = `amount-price${productObj.id}`;
-        amountPrice.innerText = `1pc. x ${productObj.price}$`
+        amountPrice.innerText = `1pc. x ${productObj.price}$`;
 
         const totalPrice = document.createElement('div');
         totalPrice.id = `total-price${productObj.id}`;
