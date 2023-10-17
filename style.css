@@ -118,7 +118,6 @@ nav {
     border-radius: 25px;
     display: grid;
     grid-template-columns: repeat(3, minmax(200px, 1fr));
-    grid-gap: 10px;
 }
 
 #cart-goods, #goods {
