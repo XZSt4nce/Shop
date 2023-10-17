@@ -5,10 +5,6 @@ const cart = {
 const products = [];
 let productsShowed = 0;
 
-function showHideSidebar() {
-
-}
-
 window.addEventListener('resize', () => {
     const sidebar = document.getElementById('sidebar');
     if (sidebar.offsetLeft !== 0) {
