@@ -257,6 +257,13 @@ function displayProduct(productObj, isCart) {
         document.getElementById('cart-goods').appendChild(product);
     } else {
         product.id = `${productObj.id}`;
+        if (productObj.id % 2 === 0) {
+            product.classList.add('column-2');
+        }
+        if (productObj.id % 3 === 0) {
+            product.classList.add('column-3');
+        }
+
         amount.id = `product-amount${productObj.id}`;
         amountContainer.id = `product-amount-container${productObj.id}`;
         amountContainer.style.display = 'none';
